@@ -9,4 +9,8 @@ public class UserRequest {
 
     private String username;
     private String password;
+    private String name_surname;
+    private int age;
+    private String sex;
+    private String mail;
 }

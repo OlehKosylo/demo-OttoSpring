@@ -1,7 +1,6 @@
 package com.demo1.applesson1.controllers;
 
-import com.demo1.applesson1.dto.LoginRequest;
-import com.demo1.applesson1.dto.UserRequest;
+import com.demo1.applesson1.dto.EditUserInfoRequest;
 import com.demo1.applesson1.dto.UserResponse;
 import com.demo1.applesson1.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -9,49 +8,62 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/main")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/all")
-    public HttpEntity<List<UserResponse>> getUsers() {
+    @GetMapping("/userInfoForMainPage")
+    public HttpEntity<UserResponse> getUserInfoForMainPage(@RequestParam Integer userId) {
 
-        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUserInfoForMainPage(userId), HttpStatus.OK);
     }
 
-    @GetMapping()
-    public HttpEntity<UserResponse> getUser(@RequestParam Integer id) {
+    @GetMapping("/userInfoForProfilePage")
+    public HttpEntity<UserResponse> getUserInfoForProfilePage(@RequestParam Integer userId) {
 
-        return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
-    }
-
-    @DeleteMapping("/delete")
-    public void delete(@RequestParam Integer id) {
-
-        userService.delete(id);
-
-        new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUserInfoForProfilePage(userId), HttpStatus.OK);
     }
 
 
-    @PostMapping("/upload")
-    public HttpEntity<String> upload(@RequestParam MultipartFile file) {
+    @PostMapping("/userEditInfo")
+    public HttpEntity<UserResponse> editUserInfo(@RequestBody EditUserInfoRequest editUserInfoResponse) {
 
-       return new ResponseEntity<>(userService.uploadAvatar(file), HttpStatus.OK);
+        System.out.println(editUserInfoResponse);
+        return new ResponseEntity<>(userService.editInfoUser(editUserInfoResponse), HttpStatus.OK);
     }
+
+//    @PostMapping("/upload")
+//    public HttpEntity<String> upload(@RequestParam MultipartFile file) {
+//
+//        return new ResponseEntity<>(userService.uploadAvatar(file,1), HttpStatus.OK);
+//    }
+
+
+//    @GetMapping("/all")
+//    public HttpEntity<List<UserResponse>> getUsers() {
+//
+//        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+//    }
+
+//    @PostMapping("/updateUserName")
+//    public void updateUserName(@RequestParam Integer id, @RequestParam String newName){
+//        userService.updateUserName(id,newName);
+//    }
+
+//    @DeleteMapping("/delete")
+//    public void delete(@RequestParam Integer id) {
+//
+//        userService.delete(id);
+//
+//        new ResponseEntity<>(HttpStatus.OK);
+//
+
+
 
 }

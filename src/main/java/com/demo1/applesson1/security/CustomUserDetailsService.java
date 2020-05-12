@@ -23,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String login) {
-        User user = userRepository.findByUsername(login)
+            User user = userRepository.findByUsername(login)
                 .orElseThrow(() ->
                         new RuntimeException("User not found [login: " + login + "]")
                 );

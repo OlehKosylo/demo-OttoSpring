@@ -13,4 +13,10 @@ public class UserResponse {
 
     private Integer id;
     private String username;
+    private String name_surname;
+    private int age;
+    private String sex;
+    private int lvl;
+    private String mail;
 }
+

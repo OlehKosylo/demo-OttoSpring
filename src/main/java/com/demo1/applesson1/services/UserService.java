@@ -1,17 +1,30 @@
 package com.demo1.applesson1.services;
 
+import com.demo1.applesson1.dto.CourseRequest;
+import com.demo1.applesson1.dto.CourseResponse;
+import com.demo1.applesson1.dto.EditUserInfoRequest;
 import com.demo1.applesson1.dto.UserResponse;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 public interface UserService {
+    UserResponse getUserInfoForMainPage(int id);
 
-    List<UserResponse> getAllUsers();
+    UserResponse getUserInfoForProfilePage(int id);
 
-    UserResponse getUser(Integer id);
+    UserResponse editInfoUser(EditUserInfoRequest user);
 
-    void delete(Integer id);
+    CourseResponse uploadCourse(CourseRequest courseRequest);
 
-    String uploadAvatar(MultipartFile file);
+    void setBoughtCourse(int userId, long courseId);
+
+//    List<UserResponse> getAllUsers();
+
+//    UserResponse getUser(Integer id);
+//
+//    void delete(Integer id);
+//
+//    void updateUserName(Integer id, String newName);
+
+//    String uploadAvatar(MultipartFile file, Integer userId);
+//
+//    String uploadVideo (CourseRequest courseRequest, Integer userId);
 }
