@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PaymentRequest {
+    private int userId;
     private String token;
     private int amount;
 }

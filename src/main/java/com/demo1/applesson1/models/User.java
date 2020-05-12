@@ -32,6 +32,7 @@ public class User {
     private int lvl;
     private String mail;
     private String stripeCustomerId;
+    private String stripeCardId;
 
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)

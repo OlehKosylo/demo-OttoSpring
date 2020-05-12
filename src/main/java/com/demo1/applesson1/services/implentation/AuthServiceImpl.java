@@ -10,7 +10,7 @@ import com.demo1.applesson1.repository.UserRepository;
 import com.demo1.applesson1.security.JwtTokenProvider;
 import com.demo1.applesson1.security.UserPrincipal;
 import com.demo1.applesson1.services.AuthService;
-import com.demo1.applesson1.services.PaymentService2;
+import com.demo1.applesson1.services.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
-    private final PaymentService2 paymentService2;
+    private final PaymentService paymentService;
 
     @Override
     public UserResponse registerUser(UserRequest userRequest) {
@@ -55,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
 
         log.info("Successfully registered user with [username: {}]", user.getUsername());
 
-        String id = paymentService2.createCustomer(user);
+        String id = paymentService.createCustomer(user);
         System.out.println(id + " id id id id id ");
         user.setStripeCustomerId(id);
 
