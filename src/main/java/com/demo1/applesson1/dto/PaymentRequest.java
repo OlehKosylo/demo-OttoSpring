@@ -6,7 +6,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PaymentRequest {
-    private int userId;
-    private String token;
-    private int amount;
+    private String card_number;
+    private String first_name;
+    private String last_name;
+    private String card_expiry;
+    private String card_cvc;
+    private int courseId;
+    private int price;
 }

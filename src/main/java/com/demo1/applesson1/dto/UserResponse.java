@@ -1,5 +1,6 @@
 package com.demo1.applesson1.dto;
 
+import com.stripe.model.Card;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,5 +19,10 @@ public class UserResponse {
     private String sex;
     private int lvl;
     private String mail;
+    private String stripe_card_id;
+    private String stripe_customer_id;
+    private String token_stripe;
+    private CardResponse card;
+    private String photoURL;
 }
 

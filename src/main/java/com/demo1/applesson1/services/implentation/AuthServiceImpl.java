@@ -6,6 +6,7 @@ import com.demo1.applesson1.dto.UserRequest;
 import com.demo1.applesson1.dto.UserResponse;
 import com.demo1.applesson1.models.Role;
 import com.demo1.applesson1.models.User;
+import com.demo1.applesson1.repository.CourseRepository;
 import com.demo1.applesson1.repository.UserRepository;
 import com.demo1.applesson1.security.JwtTokenProvider;
 import com.demo1.applesson1.security.UserPrincipal;
@@ -33,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
     private final PaymentService paymentService;
+    private final CourseRepository courseRepository;
 
     @Override
     public UserResponse registerUser(UserRequest userRequest) {
@@ -56,7 +58,6 @@ public class AuthServiceImpl implements AuthService {
         log.info("Successfully registered user with [username: {}]", user.getUsername());
 
         String id = paymentService.createCustomer(user);
-        System.out.println(id + " id id id id id ");
         user.setStripeCustomerId(id);
 
         User save = userRepository.save(user);

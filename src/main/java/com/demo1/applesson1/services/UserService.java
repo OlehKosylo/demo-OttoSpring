@@ -2,19 +2,24 @@ package com.demo1.applesson1.services;
 
 import com.demo1.applesson1.dto.CourseRequest;
 import com.demo1.applesson1.dto.CourseResponse;
-import com.demo1.applesson1.dto.EditUserInfoRequest;
+import com.demo1.applesson1.dto.UserRequest;
 import com.demo1.applesson1.dto.UserResponse;
+import com.stripe.exception.StripeException;
 
 public interface UserService {
     UserResponse getUserInfoForMainPage(int id);
 
-    UserResponse getUserInfoForProfilePage(int id);
+    UserResponse getUserInfoForProfilePage(int id) throws StripeException;
 
-    UserResponse editInfoUser(EditUserInfoRequest user);
+    UserResponse editInfoUser(UserRequest user);
+
+    UserResponse editUserPhoto(UserRequest editUserInfoResponse);
 
     CourseResponse uploadCourse(CourseRequest courseRequest);
 
     void setBoughtCourse(int userId, long courseId);
+
+
 
 //    List<UserResponse> getAllUsers();
 

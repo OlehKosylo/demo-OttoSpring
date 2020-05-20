@@ -1,31 +1,35 @@
 package com.demo1.applesson1.services.implentation;
 
+import com.demo1.applesson1.dto.CardResponse;
+import com.demo1.applesson1.dto.PaymentRequest;
+import com.demo1.applesson1.models.Course;
 import com.demo1.applesson1.models.User;
+import com.demo1.applesson1.repository.CourseRepository;
 import com.demo1.applesson1.repository.UserRepository;
 import com.demo1.applesson1.services.PaymentService;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
-import com.stripe.model.Card;
-import com.stripe.model.Charge;
-import com.stripe.model.Customer;
-import com.stripe.model.Order;
-import org.springframework.beans.factory.annotation.Value;
+import com.stripe.model.*;
+import com.stripe.param.PaymentIntentCreateParams;
 import org.springframework.stereotype.Service;
 
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Service("paymentService")
 public class PaymentServiceImpl implements PaymentService {
 
     private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
 
     private static final String TEST_STRIPE_SECRET_KEY = "sk_test_eL13nvKqdoSOSKp87jAcPXFI007qcoFUWg";
 
-    public PaymentServiceImpl(UserRepository userRepository) {
+    public PaymentServiceImpl(UserRepository userRepository, CourseRepository courseRepository) {
         this.userRepository = userRepository;
+        this.courseRepository = courseRepository;
         Stripe.apiKey = TEST_STRIPE_SECRET_KEY;
     }
 
@@ -47,48 +51,96 @@ public class PaymentServiceImpl implements PaymentService {
             System.out.println(stripeCustomer);
 
         } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
-
         return id;
     }
 
     @Override
-    public void chargeCreditCard(int userId, int amount) {
-
-        Order order = new Order();
-        order.setAmount((long) amount);
-        order.setCustomer(getStripeCustomerId(userId));
-
-        int chargeAmountCents = (int) (amount * 100);
-
-        Map<String, Object> chargeParams = new HashMap<String, Object>();
-        chargeParams.put("amount", chargeAmountCents);
-        chargeParams.put("currency", "usd");
-        chargeParams.put("description", "Otto - Customer, price: " + amount);
-        chargeParams.put("customer", getStripeCustomerId(userId));
-
+    public void chargeCreditCard(PaymentRequest paymentRequest) throws StripeException {
         try {
-            // Submit charge to credit card
-            Charge charge = Charge.create(chargeParams);
-            System.out.println(charge);
+
+            int[] money = countMoney(paymentRequest.getPrice(), 10);
+
+            String card_expiry = paymentRequest.getCard_expiry();
+            String[] split = card_expiry.split("/");
+            String[] month = split[0].split("");
+
+            String year;
+
+            if (split[1].trim().length() == 2) {
+                year = "20" + split[1].trim();
+            } else {
+                year = split[1].trim();
+            }
+
+
+            Map<String, Object> card = new HashMap<>();
+            card.put("number", paymentRequest.getCard_number());
+            card.put("exp_month", month[1].trim());
+            card.put("exp_year", year);
+            card.put("cvc", paymentRequest.getCard_cvc());
+            Map<String, Object> params = new HashMap<>();
+            params.put("type", "card");
+            params.put("card", card);
+
+            PaymentMethod paymentMethod =
+                    PaymentMethod.create(params);
+
+
+            String paymentId = paymentMethod.getId();
+
+            PaymentIntent intent = PaymentIntent.create(PaymentIntentCreateParams.builder()
+                    .setAmount((long) money[0])
+                    .setCurrency("usd")
+
+                    .setPaymentMethod(paymentId)
+                    // A PaymentIntent can be confirmed some time after creation,
+                    // but here we want to confirm (collect payment) immediately.
+                    .setConfirm(true)
+
+                    // If the payment requires any follow-up actions from the
+                    // customer, like two-factor authentication, Stripe will error
+                    // and you will need to prompt them for a new payment method.
+                    .build());
+
+            Optional<Course> course = this.courseRepository.findById((long) paymentRequest.getCourseId());
+            Course courseObject = course.get();
+            User user = courseObject.getUser();
+
+            String stripeCustomerId = user.getStripeCustomerId();
+
+
+            Customer customer =
+                    Customer.retrieve(stripeCustomerId);
+
+            Map<String, Object> params2 = new HashMap<>();
+            params2.put("amount", -money[1]);
+            params2.put("currency", "usd");
+
+            CustomerBalanceTransaction balanceTransaction =
+                    customer.balanceTransactions().create(params2);
         } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 
     @Override
-    public Card activateCard(String tok_visa, int userId) throws StripeException {
-        Stripe.apiKey = TEST_STRIPE_SECRET_KEY;
+    public void activateCard(String tok_visa, int userId, String cardId) throws StripeException {
+        try {
+            Customer customer =
+                    Customer.retrieve(getStripeCustomerId(userId));
 
-        Customer customer =
-                Customer.retrieve(getStripeCustomerId(userId));
+            Map<String, Object> params = new HashMap<>();
+            params.put("source", tok_visa);
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("source", tok_visa);
+            Card card = (Card) customer.getSources().create(params);
 
-        Card card = (Card) customer.getSources().create(params);
+            setStripeCard(userId, tok_visa, cardId);
 
-        setStripeCard(userId, tok_visa);
-        return card;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
@@ -98,8 +150,9 @@ public class PaymentServiceImpl implements PaymentService {
         return user.getStripeCustomerId();
     }
 
+
     @Override
-    public void setStripeCard(int userId, String cardId) {
+    public void setStripeCard(int userId, String tokenStripe, String cardId) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", userId)));
 
@@ -115,10 +168,61 @@ public class PaymentServiceImpl implements PaymentService {
                 .roles(user.getRoles())
                 .courses(user.getCourses())
                 .stripeCustomerId(user.getStripeCustomerId())
+                .tokenStripe(tokenStripe)
+                .photoURL(user.getPhotoURL())
                 .stripeCardId(cardId)
                 .build();
 
         userRepository.save(updateUser);
+    }
+
+    @Override
+    public void changeCard(String cardId, String stripeCustomerId, String tokenId, int userId) throws StripeException {
+//        try {
+//            Customer customer =
+//                    Customer.retrieve(stripeCustomerId);
+//
+//            Card card =
+//                    (Card) customer.getSources().retrieve(cardId);
+//
+//            Card deletedCard = (Card) card.delete();
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException(e.getMessage());
+//        }
+    }
+
+    @Override
+    public CardResponse retrieveCard(int userId) throws StripeException {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", userId)));
+
+        try {
+            Customer customer =
+                    Customer.retrieve(user.getStripeCustomerId());
+
+            Card card =
+                    (Card) customer.getSources().retrieve(
+                            user.getStripeCardId()
+                    );
+
+
+            return CardResponse.builder()
+                    .exp_month(card.getExpMonth())
+                    .exp_year(Math.toIntExact(card.getExpYear()))
+                    .last4(card.getLast4())
+                    .name(card.getName())
+                    .build();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+    }
+
+    private int[] countMoney(int amount, int procent) {
+        int procentOfMoney = (amount * procent);
+        int moneyForCustomer = (amount - procentOfMoney) * 10;
+        return new int[]{procentOfMoney, moneyForCustomer};
     }
 
 }

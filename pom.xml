@@ -91,6 +91,11 @@
             <artifactId>jaxb-api</artifactId>
             <version>${jaxb.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>15.4.0</version>
+        </dependency>
 
     </dependencies>
 

@@ -31,6 +31,9 @@ public class Course {
 
     private String publicKey;
 
+    private Integer statusForCheckIfUserHasThisCourse;
+
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_courses_buy",
             joinColumns = @JoinColumn(name = "course_id"),
@@ -44,7 +47,8 @@ public class Course {
     @Override
     public String toString() {
         return "id=" + id + "title=" + title + "description=" + description + "price=" + price
-                + "genre=" + genre + "linkOnVideo=" + linkOnVideo;
+                + "genre=" + genre + "linkOnVideo=" + linkOnVideo + "statusForCheckIfUserHasThisCourse=" + statusForCheckIfUserHasThisCourse;
+
     }
 
 }

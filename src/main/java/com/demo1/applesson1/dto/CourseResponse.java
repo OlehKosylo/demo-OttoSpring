@@ -15,4 +15,5 @@ public class CourseResponse {
     private int price;
     private String genre;
     private String downloadURL;
+    private int statusForCheckIfUserHasThisCourse;
 }

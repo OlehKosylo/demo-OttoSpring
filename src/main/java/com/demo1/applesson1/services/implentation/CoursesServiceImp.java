@@ -12,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,15 +28,39 @@ public class CoursesServiceImp implements CourseService {
     private final UserRepository userRepository;
 
     @Override
-    public List<CourseResponse> getListCourses(String genre) {
-        return courseRepository.findAllByGenre(genre).stream().map(course -> CourseResponse.builder()
-                .id(course.getId())
-                .genre(course.getGenre())
-                .title(course.getTitle())
-                .price(course.getPrice())
-                .downloadURL(course.getLinkOnVideo())
-                .description(course.getDescription())
-                .build()).collect(Collectors.toList());
+    public List<CourseResponse> getListCourses(String genre, int userId) {
+
+        List<Course> originalCourse = courseRepository.findAllByGenre(genre);
+        List<Course> newListCourse = new ArrayList<Course>();
+
+        for (int i = 0; i < originalCourse.size(); i++) {
+            Course course = originalCourse.get(i);
+
+            List<User> users = course.getUsers();
+            for (int j = 0; j < users.size(); j++) {
+                User user = users.get(j);
+
+                if (userId == user.getId()) {
+                    course.setStatusForCheckIfUserHasThisCourse(1);
+                    break;
+                } else {
+                    course.setStatusForCheckIfUserHasThisCourse(0);
+                }
+            }
+            newListCourse.add(course);
+        }
+
+        return newListCourse.stream().map(course ->
+                CourseResponse.builder()
+                        .id(course.getId())
+                        .genre(course.getGenre())
+                        .title(course.getTitle())
+                        .price(course.getPrice())
+                        .downloadURL(course.getLinkOnVideo())
+                        .description(course.getDescription())
+                        .statusForCheckIfUserHasThisCourse(course.getStatusForCheckIfUserHasThisCourse())
+                        .build()).collect(Collectors.toList());
+
     }
 
     @Override
@@ -69,30 +96,5 @@ public class CoursesServiceImp implements CourseService {
     public boolean existsId(long id) {
         return courseRepository.existsById(id);
     }
-
-
-//    @Override
-//    public List<CourseResponse> getListCourses(String genre) {
-//
-//        List<Course> coursesList = courseRepository.findAllByGenre(genre);
-//        Iterator<Course> iter = coursesList.iterator();
-//        List<CourseResponse> courseResponseList = null;
-//
-//        while (iter.hasNext()) {
-//            Course course = iter.next();
-//
-//            CourseResponse courseIter = CourseResponse.builder()
-//                    .title(course.getTitle())
-//                    .description(course.getDescription())
-//                    .downloadURL(course.getLinkOnVideo())
-//                    .price(course.getPrice())
-//                    .genre(course.getGenre())
-//                    .build();
-//            courseResponseList.add(courseIter);
-//        }
-//
-//        return courseResponseList;
-//    }
-
 
 }

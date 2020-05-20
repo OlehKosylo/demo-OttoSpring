@@ -30,8 +30,9 @@ public class CourseController {
 
 
     @GetMapping("/list")
-    public HttpEntity<List<CourseResponse>> getListCourses(@RequestParam String genre) {
-        return new ResponseEntity<>(courseService.getListCourses(genre), HttpStatus.OK);
+    public HttpEntity<List<CourseResponse>> getListCourses(@RequestParam String genre, @RequestParam int userId) {
+
+        return new ResponseEntity<>(courseService.getListCourses(genre, userId), HttpStatus.OK);
     }
 
     @GetMapping("/myList")
@@ -52,7 +53,6 @@ public class CourseController {
         userService.setBoughtCourse(id.getUserId(), id.getCourseId());
         return HttpStatus.OK;
     }
-
 
 
 }

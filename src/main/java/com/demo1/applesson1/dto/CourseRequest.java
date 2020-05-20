@@ -14,5 +14,4 @@ public class CourseRequest {
     private String genre;
     private String downloadURL;
     private int userId;
-    private String publicKey;
 }
