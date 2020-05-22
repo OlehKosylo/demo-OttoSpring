@@ -11,4 +11,6 @@ public interface CourseService {
 
     CourseResponse getCourse(long courseId);
 
+    List<CourseResponse> getWantedCourses(String title);
+
 }

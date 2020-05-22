@@ -34,6 +34,12 @@ public class CourseController {
         return new ResponseEntity<>(courseService.getListCourses(genre, userId), HttpStatus.OK);
     }
 
+    @GetMapping("/searchCourse")
+    public HttpEntity<List<CourseResponse>> getWantedCourses(@RequestParam String title) {
+
+        return new ResponseEntity<>(courseService.getWantedCourses(title), HttpStatus.OK);
+    }
+
     @GetMapping("/myList")
     public HttpEntity<List<CourseResponse>> getListCourses(@RequestParam int userId) {
 

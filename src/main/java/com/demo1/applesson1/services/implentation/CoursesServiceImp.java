@@ -71,6 +71,22 @@ public class CoursesServiceImp implements CourseService {
                 .build();
     }
 
+    @Override
+    public List<CourseResponse> getWantedCourses(String title) {
+        List<Course> allByTitleCustom = courseRepository.findAllByTitle(title);
+
+        return allByTitleCustom.stream().map(course ->
+                CourseResponse.builder()
+                        .id(course.getId())
+                        .genre(course.getGenre())
+                        .title(course.getTitle())
+                        .price(course.getPrice())
+                        .downloadURL(course.getLinkOnVideo())
+                        .description(course.getDescription())
+                        .statusForCheckIfUserHasThisCourse(course.getStatusForCheckIfUserHasThisCourse())
+                        .build()).collect(Collectors.toList());
+    }
+
     private List<Course> listWithCheckedCourseStatus(List<Course> originalCourse, int userId) {
         List<Course> newListCourse = new ArrayList<Course>();
 
