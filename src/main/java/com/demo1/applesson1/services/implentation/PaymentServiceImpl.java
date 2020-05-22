@@ -25,7 +25,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
 
-//    @Value("${stripe.key.secret}")
+    //    @Value("${stripe.key.secret}")
     private static final String TEST_STRIPE_SECRET_KEY = "sk_test_eL13nvKqdoSOSKp87jAcPXFI007qcoFUWg";
 
     public PaymentServiceImpl(UserRepository userRepository, CourseRepository courseRepository) {
@@ -59,23 +59,12 @@ public class PaymentServiceImpl implements PaymentService {
 
         int[] money = countMoney(paymentRequest.getPrice(), 10);
 
-        String card_expiry = paymentRequest.getCard_expiry();
-        String[] split = card_expiry.split("/");
-        String[] month = split[0].split("");
-
-        String year;
-
-        if (split[1].trim().length() == 2) {
-            year = "20" + split[1].trim();
-        } else {
-            year = split[1].trim();
-        }
-
+        String[] monthAndYear = yearAndMonthForCard(paymentRequest);
 
         Map<String, Object> card = new HashMap<>();
         card.put("number", paymentRequest.getCard_number());
-        card.put("exp_month", month[1].trim());
-        card.put("exp_year", year);
+        card.put("exp_month", monthAndYear[0]);
+        card.put("exp_year", monthAndYear[1]);
         card.put("cvc", paymentRequest.getCard_cvc());
         Map<String, Object> params = new HashMap<>();
         params.put("type", "card");
@@ -174,7 +163,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public void changeCard(String cardId, String stripeCustomerId, String tokenId, int userId){
+    public void changeCard(String cardId, String stripeCustomerId, String tokenId, int userId) {
         try {
             Customer customer =
                     Customer.retrieve(stripeCustomerId);
@@ -220,6 +209,26 @@ public class PaymentServiceImpl implements PaymentService {
         int procentOfMoney = (amount * procent);
         int moneyForCustomer = (amount - procentOfMoney) * 10;
         return new int[]{procentOfMoney, moneyForCustomer};
+    }
+
+    private String[] yearAndMonthForCard(PaymentRequest paymentRequest) {
+        String card_expiry = paymentRequest.getCard_expiry();
+        String[] split = card_expiry.split("/");
+        String[] month = split[0].split("");
+
+        String year;
+
+        if (split[1].trim().length() == 2) {
+            year = "20" + split[1].trim();
+        } else {
+            year = split[1].trim();
+        }
+
+        String[] array = new String[2];
+        array[0] = split[1].trim();
+        array[1] = year;
+
+        return array;
     }
 
 }

@@ -144,7 +144,7 @@ public class UserServiceImpl implements UserService {
                 .age(user.getAge())
                 .sex(user.getSex())
                 .username(user.getUsername())
-                .password(passwordEncoder.encode(user.getPassword()))
+                .password(user.getPassword())
                 .lvl(user.getLvl())
                 .stripeCardId(user.getStripeCardId())
                 .stripeCustomerId(user.getStripeCustomerId())

@@ -29,26 +29,8 @@ public class CoursesServiceImp implements CourseService {
     public List<CourseResponse> getListCourses(String genre, int userId) {
 
         List<Course> originalCourse = courseRepository.findAllByGenre(genre);
-        List<Course> newListCourse = new ArrayList<Course>();
 
-        //Checking the status of the course for UI view
-        for (int i = 0; i < originalCourse.size(); i++) {
-
-            Course course = originalCourse.get(i);
-            List<User> users = course.getUsers();
-
-            for (int j = 0; j < users.size(); j++) {
-                User user = users.get(j);
-
-                if (userId == user.getId()) {
-                    course.setStatusForCheckIfUserHasThisCourse(1);
-                    break;
-                } else {
-                    course.setStatusForCheckIfUserHasThisCourse(0);
-                }
-            }
-            newListCourse.add(course);
-        }
+        List<Course> newListCourse = listWithCheckedCourseStatus(originalCourse, userId);
 
         return newListCourse.stream().map(course ->
                 CourseResponse.builder()
@@ -87,6 +69,30 @@ public class CoursesServiceImp implements CourseService {
                 .title(course.getTitle())
                 .genre(course.getGenre())
                 .build();
+    }
+
+    private List<Course> listWithCheckedCourseStatus(List<Course> originalCourse, int userId) {
+        List<Course> newListCourse = new ArrayList<Course>();
+
+        for (int i = 0; i < originalCourse.size(); i++) {
+
+            Course course = originalCourse.get(i);
+            List<User> users = course.getUsers();
+
+            for (int j = 0; j < users.size(); j++) {
+                User user = users.get(j);
+
+                if (userId == user.getId()) {
+                    course.setStatusForCheckIfUserHasThisCourse(1);
+                    break;
+                } else {
+                    course.setStatusForCheckIfUserHasThisCourse(0);
+                }
+            }
+            newListCourse.add(course);
+        }
+
+        return newListCourse;
     }
 
 }
