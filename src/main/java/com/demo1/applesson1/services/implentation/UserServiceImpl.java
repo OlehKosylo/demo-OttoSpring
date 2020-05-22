@@ -7,8 +7,6 @@ import com.demo1.applesson1.repository.CourseRepository;
 import com.demo1.applesson1.repository.UserRepository;
 import com.demo1.applesson1.services.PaymentService;
 import com.demo1.applesson1.services.UserService;
-import com.stripe.exception.StripeException;
-import com.stripe.model.Card;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +28,10 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final PaymentService paymentService;
 
-
-    private String initVector;
-
-
     @Override
     public UserResponse getUserInfoForMainPage(int id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", id)));
+
         return UserResponse.builder()
                 .name_surname(user.getName_surname())
                 .lvl(user.getLvl())
@@ -46,7 +41,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse getUserInfoForProfilePage(int id) throws StripeException {
+    public UserResponse getUserInfoForProfilePage(int id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", id)));
 
         if (user.getStripeCardId() != null ) {
@@ -79,14 +74,14 @@ public class UserServiceImpl implements UserService {
                     .photoURL(user.getPhotoURL())
                     .build();
         }
-
-
     }
 
 
     @Override
     public UserResponse editInfoUser(UserRequest user) {
-        User userOfDB = userRepository.findById(user.getId()).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", user.getId())));
+
+        int userId = user.getId();
+        User userOfDB = userRepository.findById(userId).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", userId)));
 
         User newUser;
 
@@ -104,6 +99,7 @@ public class UserServiceImpl implements UserService {
                     .tokenStripe(userOfDB.getTokenStripe())
                     .photoURL(userOfDB.getPhotoURL())
                     .mail(userOfDB.getMail())
+                    .statusMailActivate(userOfDB.getStatusMailActivate())
                     .build();
         } else {
             newUser = User.builder()
@@ -119,12 +115,13 @@ public class UserServiceImpl implements UserService {
                     .tokenStripe(userOfDB.getTokenStripe())
                     .photoURL(userOfDB.getPhotoURL())
                     .mail(userOfDB.getMail())
+                    .statusMailActivate(userOfDB.getStatusMailActivate())
                     .build();
         }
 
         User save = userRepository.save(newUser);
 
-        return UserResponse.builder().build().builder()
+        return UserResponse.builder()
                 .name_surname(user.getName_surname())
                 .age(user.getAge())
                 .id(user.getId())
@@ -135,7 +132,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse editUserPhoto(UserRequest editUserInfoResponse) {
-        Optional<User> optionalUser = userRepository.findById(editUserInfoResponse.getId());
+        int userId = editUserInfoResponse.getId();
+        Optional<User> optionalUser = Optional.of(userRepository.findById(userId).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", userId))));
         User user = optionalUser.get();
 
         User newUser;
@@ -153,6 +151,7 @@ public class UserServiceImpl implements UserService {
                 .tokenStripe(user.getTokenStripe())
                 .mail(user.getMail())
                 .photoURL(editUserInfoResponse.getPhotoURL())
+                .statusMailActivate(user.getStatusMailActivate())
                 .build();
 
         userRepository.save(newUser);
@@ -179,7 +178,9 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Username [username: " + courseRequest.getTitle() + "] is already taken");
         }
 
-        Optional<User> user = Optional.ofNullable((userRepository.findById(courseRequest.getUserId()))).orElseThrow();
+        int userId = courseRequest.getUserId();
+        Optional<User> optionalUser = Optional.ofNullable((userRepository.findById(userId))).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", userId)));
+        User user = optionalUser.get();
 
         Course course = Course.builder()
                 .title(courseRequest.getTitle())
@@ -187,14 +188,12 @@ public class UserServiceImpl implements UserService {
                 .price(courseRequest.getPrice())
                 .genre(courseRequest.getGenre())
                 .linkOnVideo(courseRequest.getDownloadURL())
-                .user(user.get())
+                .user(user)
                 .statusForCheckIfUserHasThisCourse(0)
-                .users(Collections.singletonList(user.get()))
+                .users(Collections.singletonList(user))
                 .build();
 
-
         Course saveCourse = courseRepository.save(course);
-
 
         return CourseResponse.builder()
                 .title(course.getTitle())
@@ -208,120 +207,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setBoughtCourse(int userId, long courseId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", userId)));
+
         List<Course> courses = user.getCourses();
-        Optional<Course> course = courseRepository.findById(courseId);
+
+        Optional<Course> course = Optional.of(courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException(String.format("Course with id: %s not found!", courseId))));
         courses.add(course.get());
         user.setCourses(courses);
+
         userRepository.save(user);
     }
-
-
 }
-
-
-//
-//
-//    @Override
-//    public List<UserResponse> getAllUsers() {
-//        return userRepository.findAll().stream().map(user -> UserResponse.builder()
-//                .id(user.getId())
-//                .username(user.getUsername())
-//                .build()).collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public UserResponse getUser(Integer id) {
-//
-//        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", id)));
-//
-//        return UserResponse.builder()
-//                .id(user.getId())
-//                .username(user.getUsername())
-//                .build();
-//
-//    }
-//
-//
-//
-//    @Override
-//    public void delete(Integer id) {
-//
-//        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", id)));
-//
-//        userRepository.delete(user);
-//    }
-//
-//    @Override
-//    public void updateUserName(Integer id, String newName) {
-//        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", id)));
-//        user.setName(newName);
-//        userRepository.save(user);
-//    }
-
-//
-//    @Override
-//    public String uploadAvatar(MultipartFile file, Integer userId) {
-//
-//        if (file == null) throw new RuntimeException("File cannot be null!");
-////        String path = "";
-//
-////        try {
-////            Files.createDirectories(Paths.get(path + file.getOriginalFilename()));
-////        } catch (IOException e) {
-////            e.printStackTrace();
-////        }
-//
-//        File avatar;
-//        try {
-//
-//            avatar = new File(file.getOriginalFilename());
-//
-//            file.transferTo(avatar);
-//
-//        } catch (IOException e) {
-//            throw new RuntimeException("Something goes wrong!");
-//        }
-//
-////        User user = userRepository.findById(userId)
-////                .orElseThrow(() -> new RuntimeException("User does not exist!"));
-////
-////
-////        userRepository.save(user);
-//
-//        return avatar.getPath();
-//    }
-//
-//
-//    @Override
-//    public String uploadVideo(CourseRequest courseRequest, Integer userId) {
-//
-//        if (file == null) throw new RuntimeException("File cannot be null!");
-//        String path =  System.getProperty("user.home") + File.separator + "video" + File.separator + file.getOriginalFilename();
-//
-////        try {
-////            Files.createDirectories(Paths.get(path + file.getOriginalFilename()));
-////        } catch (IOException e) {
-////            e.printStackTrace();
-////        }
-//
-//
-//        File video;
-//        try {
-//
-//            video = new File(path);
-//
-//            file.transferTo(video);
-//
-//        } catch (IOException e) {
-//            throw new RuntimeException("Something goes wrong!");
-//        }
-//
-////        User user = userRepository.findById(userId)
-////                .orElseThrow(() -> new RuntimeException("User does not exist!"));
-////
-////
-////        userRepository.save(user);
-//
-//        return video.getPath();
-//    }
-

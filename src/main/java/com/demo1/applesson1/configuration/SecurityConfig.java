@@ -38,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/webjars/**",
             "/h2/**",
             "/api/auth/**",
+            "/api/activate/**",
     };
 
     private CustomUserDetailsService customUserDetailsService; //Потрібен для AuthenticationManager. Щоб навчити його грузити користувача.

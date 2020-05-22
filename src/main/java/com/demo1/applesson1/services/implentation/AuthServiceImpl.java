@@ -1,16 +1,13 @@
 package com.demo1.applesson1.services.implentation;
 
-import com.demo1.applesson1.dto.JwtAuthenticationResponse;
-import com.demo1.applesson1.dto.LoginRequest;
-import com.demo1.applesson1.dto.UserRequest;
-import com.demo1.applesson1.dto.UserResponse;
-import com.demo1.applesson1.models.Role;
+import com.demo1.applesson1.dto.*;
 import com.demo1.applesson1.models.User;
 import com.demo1.applesson1.repository.CourseRepository;
 import com.demo1.applesson1.repository.UserRepository;
 import com.demo1.applesson1.security.JwtTokenProvider;
 import com.demo1.applesson1.security.UserPrincipal;
 import com.demo1.applesson1.services.AuthService;
+import com.demo1.applesson1.services.MailSenderService;
 import com.demo1.applesson1.services.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +18,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import java.util.Collections;
+import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -34,10 +33,10 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
     private final PaymentService paymentService;
-    private final CourseRepository courseRepository;
+    private final MailSenderService mailSenderService;
 
     @Override
-    public UserResponse registerUser(UserRequest userRequest) {
+    public void registerUser(UserRequest userRequest) {
 
         if (userRepository.existsByUsername(userRequest.getUsername())) {
             throw new RuntimeException("Username [username: " + userRequest.getUsername() + "] is already taken");
@@ -51,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
                 .age(userRequest.getAge())
                 .sex(userRequest.getSex())
                 .mail(userRequest.getMail())
-                .roles(Collections.singletonList(Role.ROLE_USER))
+                .statusMailActivate(UUID.randomUUID().toString())
                 .build();
 
 
@@ -60,16 +59,23 @@ public class AuthServiceImpl implements AuthService {
         String id = paymentService.createCustomer(user);
         user.setStripeCustomerId(id);
 
-        User save = userRepository.save(user);
+        //Sending mail part
+        if (!StringUtils.isEmpty(user.getMail())) {
+            String message = String.format(
+                    "Hello, %s \n" +
+                            "Welcome to Otto. \n" +
+                            "Please, visit next link: http://localhost:4200/activate?token=%s",
+                    user.getName_surname(),
+                    user.getStatusMailActivate()
+            );
 
-        return UserResponse.builder()
-                .username(save.getUsername())
-                .id(save.getId())
-                .name_surname(save.getName_surname())
-                .age(save.getAge())
-                .sex(save.getSex())
-                .mail(save.getMail())
-                .build();
+            try {
+                mailSenderService.send(user.getMail(), "Activation code", message);
+                User userSave = userRepository.save(user);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }
     }
 
     @Override
@@ -89,6 +95,43 @@ public class AuthServiceImpl implements AuthService {
 
         log.info("User with [username: {}] has logged in", userPrincipal.getUsername());
 
+        Boolean statusMail = checkStatusUserMail(loginRequest.getUsername());
+
+        if (!statusMail) {
+            throw new RuntimeException(String.format("Please, activate your mail."));
+        }
+
         return new JwtAuthenticationResponse(jwt);
+
+    }
+
+    @Override
+    public void activateAccount(String token) {
+        User userOfDB = userRepository.findByStatusMailActivate(token).orElseThrow(() -> new RuntimeException(String.format("User with activatedToken: %s not found!", token)));
+
+        User user = User.builder()
+                .id(userOfDB.getId())
+                .username(userOfDB.getUsername())
+                .password(userOfDB.getPassword())
+                .name_surname(userOfDB.getName_surname())
+                .age(userOfDB.getAge())
+                .sex(userOfDB.getSex())
+                .mail(userOfDB.getMail())
+                .stripeCustomerId(userOfDB.getStripeCustomerId())
+                .statusMailActivate("Activated")
+                .build();
+
+        userRepository.save(user);
+    }
+
+    private Boolean checkStatusUserMail(String username) {
+        Optional<User> byUsername = userRepository.findByUsername(username);
+        User user = byUsername.get();
+        String statusMailActivate = user.getStatusMailActivate();
+        if (statusMailActivate.equals("Activated")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

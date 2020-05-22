@@ -2,11 +2,7 @@ package com.demo1.applesson1.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
-
 import javax.persistence.*;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -32,9 +28,9 @@ public class User {
     private int age;
     private String sex;
     private int lvl;
-    private String mail;
     private String photoURL;
-
+    private String mail;
+    private String statusMailActivate;
 
     private String stripeCustomerId;
     private String tokenStripe;
@@ -45,15 +41,7 @@ public class User {
     @JoinTable(name = "user_courses_buy",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "course_id"))
-
     private List<Course> courses;
-
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    private Stripe stripe;
-
-
-//    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-//    private List<Course> createdCourses;
 
 
     @JsonIgnore
@@ -67,7 +55,7 @@ public class User {
         return "id=" + id + "username=" + username + "password=" + password +
                 "name_surname=" + name_surname + "age=" + age + "sex=" + sex + "lvl=" + lvl
                 + "stripeCustomerId" + stripeCustomerId + "tokenStripe" + tokenStripe + "stripeCardId" + stripeCardId
-                + "photoURL=" + photoURL;
+                + "photoURL=" + photoURL + "statusMailActivate="+ statusMailActivate;
     }
 }
 

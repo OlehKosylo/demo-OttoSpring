@@ -7,8 +7,9 @@ import com.demo1.applesson1.dto.UserResponse;
 
 public interface AuthService {
 
-    UserResponse registerUser(UserRequest userRequest);
+    void registerUser(UserRequest userRequest);
 
     JwtAuthenticationResponse loginUser(LoginRequest loginRequest);
 
+    void activateAccount(String token);
 }

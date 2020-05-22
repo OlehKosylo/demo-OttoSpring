@@ -96,7 +96,6 @@
             <artifactId>stripe-java</artifactId>
             <version>15.4.0</version>
         </dependency>
-
     </dependencies>
 
     <build>

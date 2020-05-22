@@ -2,7 +2,6 @@ package com.demo1.applesson1.services;
 
 
 import com.demo1.applesson1.dto.CourseResponse;
-
 import java.util.List;
 
 public interface CourseService {
@@ -12,5 +11,4 @@ public interface CourseService {
 
     CourseResponse getCourse(long courseId);
 
-    boolean existsId(long id);
 }

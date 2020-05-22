@@ -18,18 +18,4 @@ public interface UserService {
     CourseResponse uploadCourse(CourseRequest courseRequest);
 
     void setBoughtCourse(int userId, long courseId);
-
-
-
-//    List<UserResponse> getAllUsers();
-
-//    UserResponse getUser(Integer id);
-//
-//    void delete(Integer id);
-//
-//    void updateUserName(Integer id, String newName);
-
-//    String uploadAvatar(MultipartFile file, Integer userId);
-//
-//    String uploadVideo (CourseRequest courseRequest, Integer userId);
 }

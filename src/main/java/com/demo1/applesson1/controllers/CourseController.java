@@ -28,7 +28,6 @@ public class CourseController {
         return new ResponseEntity<>(userService.uploadCourse(courseRequest), HttpStatus.OK);
     }
 
-
     @GetMapping("/list")
     public HttpEntity<List<CourseResponse>> getListCourses(@RequestParam String genre, @RequestParam int userId) {
 
@@ -49,7 +48,7 @@ public class CourseController {
 
     @PostMapping("/setBoughtCourse")
     public HttpStatus setBoughtCourse(@RequestBody IdUserCourseRequest id) {
-        System.out.println(id.getUserId() + " " + id.getCourseId());
+
         userService.setBoughtCourse(id.getUserId(), id.getCourseId());
         return HttpStatus.OK;
     }

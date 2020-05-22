@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,10 +31,12 @@ public class CoursesServiceImp implements CourseService {
         List<Course> originalCourse = courseRepository.findAllByGenre(genre);
         List<Course> newListCourse = new ArrayList<Course>();
 
+        //Checking the status of the course for UI view
         for (int i = 0; i < originalCourse.size(); i++) {
-            Course course = originalCourse.get(i);
 
+            Course course = originalCourse.get(i);
             List<User> users = course.getUsers();
+
             for (int j = 0; j < users.size(); j++) {
                 User user = users.get(j);
 
@@ -60,7 +60,6 @@ public class CoursesServiceImp implements CourseService {
                         .description(course.getDescription())
                         .statusForCheckIfUserHasThisCourse(course.getStatusForCheckIfUserHasThisCourse())
                         .build()).collect(Collectors.toList());
-
     }
 
     @Override
@@ -74,7 +73,6 @@ public class CoursesServiceImp implements CourseService {
                 .build()).collect(Collectors.toList());
 
         return collect;
-
     }
 
     @Override
@@ -89,12 +87,6 @@ public class CoursesServiceImp implements CourseService {
                 .title(course.getTitle())
                 .genre(course.getGenre())
                 .build();
-    }
-
-
-    @Override
-    public boolean existsId(long id) {
-        return courseRepository.existsById(id);
     }
 
 }

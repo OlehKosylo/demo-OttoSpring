@@ -1,6 +1,5 @@
 package com.demo1.applesson1.dto;
 
-import com.stripe.model.Card;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

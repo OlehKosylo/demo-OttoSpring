@@ -9,14 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/main")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+
 public class UserController {
 
     private final UserService userService;
+
 
     @GetMapping("/userInfoForMainPage")
     public HttpEntity<UserResponse> getUserInfoForMainPage(@RequestParam Integer userId) {
@@ -40,7 +43,6 @@ public class UserController {
     @PostMapping("/userEditPhoto")
     public HttpEntity<UserResponse> editUserPhoto(@RequestBody UserRequest editUserInfoResponse) {
 
-        System.out.println(editUserInfoResponse);
         return new ResponseEntity<>(userService.editUserPhoto(editUserInfoResponse), HttpStatus.OK);
     }
 

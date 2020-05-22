@@ -2,7 +2,6 @@ package com.demo1.applesson1.dto;
 
 import lombok.*;
 
-import java.io.File;
 
 @Data
 @Builder
