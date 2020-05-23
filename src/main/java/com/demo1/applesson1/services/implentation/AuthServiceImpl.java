@@ -2,7 +2,6 @@ package com.demo1.applesson1.services.implentation;
 
 import com.demo1.applesson1.dto.*;
 import com.demo1.applesson1.models.User;
-import com.demo1.applesson1.repository.CourseRepository;
 import com.demo1.applesson1.repository.UserRepository;
 import com.demo1.applesson1.security.JwtTokenProvider;
 import com.demo1.applesson1.security.UserPrincipal;
@@ -20,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j

@@ -26,21 +26,16 @@ public class CoursesServiceImp implements CourseService {
     private final UserRepository userRepository;
 
     @Override
-    public List<CourseResponse> getListCourses(String genre, int userId) {
+    public List<CourseResponse> getListCourses(String genre) {
 
         List<Course> originalCourse = courseRepository.findAllByGenre(genre);
 
-        List<Course> newListCourse = listWithCheckedCourseStatus(originalCourse, userId);
+//        List<Course> newListCourse = listWithCheckedCourseStatus(originalCourse, userId);
 
-        return newListCourse.stream().map(course ->
+        return originalCourse.stream().map(course ->
                 CourseResponse.builder()
                         .id(course.getId())
-                        .genre(course.getGenre())
                         .title(course.getTitle())
-                        .price(course.getPrice())
-                        .downloadURL(course.getLinkOnVideo())
-                        .description(course.getDescription())
-                        .statusForCheckIfUserHasThisCourse(course.getStatusForCheckIfUserHasThisCourse())
                         .build()).collect(Collectors.toList());
     }
 
@@ -58,7 +53,7 @@ public class CoursesServiceImp implements CourseService {
     }
 
     @Override
-    public CourseResponse getCourse(long courseId) {
+    public CourseResponse getMyCourse(long courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException(String.format("Course with id: %s not found!", courseId)));
 
         return CourseResponse.builder()
@@ -87,28 +82,41 @@ public class CoursesServiceImp implements CourseService {
                         .build()).collect(Collectors.toList());
     }
 
-    private List<Course> listWithCheckedCourseStatus(List<Course> originalCourse, int userId) {
-        List<Course> newListCourse = new ArrayList<Course>();
+    @Override
+    public CourseResponse getCourse(String title, int userId) {
 
-        for (int i = 0; i < originalCourse.size(); i++) {
+        Course courseOfDB = courseRepository.findByTitle(title).orElseThrow(() -> new RuntimeException(String.format("Course with title: %s not found!", title)));
 
-            Course course = originalCourse.get(i);
-            List<User> users = course.getUsers();
+        Course course = courseWithCheckedCourseStatus(courseOfDB, userId);
 
-            for (int j = 0; j < users.size(); j++) {
-                User user = users.get(j);
+        return CourseResponse.builder()
+                .genre(course.getGenre())
+                .title(course.getTitle())
+                .price(course.getPrice())
+                .description(course.getDescription())
+                .id(course.getId())
+                .statusForCheckIfUserHasThisCourse(course.getStatusForCheckIfUserHasThisCourse())
+                .build();
 
-                if (userId == user.getId()) {
-                    course.setStatusForCheckIfUserHasThisCourse(1);
-                    break;
-                } else {
-                    course.setStatusForCheckIfUserHasThisCourse(0);
-                }
+    }
+
+    private Course courseWithCheckedCourseStatus(Course originalCourse, int userId) {
+        Course course = originalCourse;
+
+        List<User> users = originalCourse.getUsers();
+
+        for (int j = 0; j < users.size(); j++) {
+            User user = users.get(j);
+
+            if (userId == user.getId()) {
+                course.setStatusForCheckIfUserHasThisCourse(1);
+                break;
+            } else {
+                course.setStatusForCheckIfUserHasThisCourse(0);
             }
-            newListCourse.add(course);
         }
 
-        return newListCourse;
+        return course;
     }
 
 }

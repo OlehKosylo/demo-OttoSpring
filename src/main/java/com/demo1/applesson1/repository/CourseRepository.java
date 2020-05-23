@@ -5,10 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
    List<Course> findAllByGenre(String genre);
+
+    Optional<Course> findByTitle(String title);
 
    @Query(value = "SELECT * FROM Course WHERE title like CONCAT('%',:titleValue,'%')", nativeQuery = true)
    List<Course> findAllByTitle(String titleValue);

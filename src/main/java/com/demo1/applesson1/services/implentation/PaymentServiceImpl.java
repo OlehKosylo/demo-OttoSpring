@@ -10,13 +10,11 @@ import com.demo1.applesson1.services.PaymentService;
 import com.stripe.Stripe;
 import com.stripe.model.*;
 import com.stripe.param.PaymentIntentCreateParams;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 
 @Service("paymentService")
@@ -60,6 +58,8 @@ public class PaymentServiceImpl implements PaymentService {
         int[] money = countMoney(paymentRequest.getPrice(), 10);
 
         String[] monthAndYear = yearAndMonthForCard(paymentRequest);
+
+        System.out.println(monthAndYear[0] + "  " + monthAndYear[1]);
 
         Map<String, Object> card = new HashMap<>();
         card.put("number", paymentRequest.getCard_number());
@@ -213,7 +213,12 @@ public class PaymentServiceImpl implements PaymentService {
     private String[] yearAndMonthForCard(PaymentRequest paymentRequest) {
         String card_expiry = paymentRequest.getCard_expiry();
         String[] split = card_expiry.split("/");
-        String[] month = split[0].split("");
+        String month;
+         if(split[0].trim().charAt(0) == '0'){
+             month = split[0].trim().charAt(1) + "";
+         } else {
+             month = split[0].trim();
+         }
 
         String year;
 
@@ -224,7 +229,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         String[] array = new String[2];
-        array[0] = split[1].trim();
+        array[0] = month;
         array[1] = year;
 
         return array;

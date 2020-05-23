@@ -29,10 +29,17 @@ public class CourseController {
     }
 
     @GetMapping("/list")
-    public HttpEntity<List<CourseResponse>> getListCourses(@RequestParam String genre, @RequestParam int userId) {
+    public HttpEntity<List<CourseResponse>> getListCourses(@RequestParam String genre) {
 
-        return new ResponseEntity<>(courseService.getListCourses(genre, userId), HttpStatus.OK);
+        return new ResponseEntity<>(courseService.getListCourses(genre), HttpStatus.OK);
     }
+
+    @GetMapping("/getCourse")
+    public HttpEntity<CourseResponse> getCourse(@RequestParam String title, @RequestParam int userId) {
+
+        return new ResponseEntity<>(courseService.getCourse(title, userId), HttpStatus.OK);
+    }
+
 
     @GetMapping("/searchCourse")
     public HttpEntity<List<CourseResponse>> getWantedCourses(@RequestParam String title) {
@@ -47,9 +54,9 @@ public class CourseController {
     }
 
     @GetMapping("/myCourse")
-    public HttpEntity<CourseResponse> getCourse(@RequestParam int courseId) {
+    public HttpEntity<CourseResponse> getMyCourse(@RequestParam int courseId) {
 
-        return new ResponseEntity<>(courseService.getCourse(courseId), HttpStatus.OK);
+        return new ResponseEntity<>(courseService.getMyCourse(courseId), HttpStatus.OK);
     }
 
     @PostMapping("/setBoughtCourse")
