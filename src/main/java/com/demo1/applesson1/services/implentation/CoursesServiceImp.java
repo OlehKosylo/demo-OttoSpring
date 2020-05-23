@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,12 +30,12 @@ public class CoursesServiceImp implements CourseService {
 
         List<Course> originalCourse = courseRepository.findAllByGenre(genre);
 
-//        List<Course> newListCourse = listWithCheckedCourseStatus(originalCourse, userId);
-
         return originalCourse.stream().map(course ->
                 CourseResponse.builder()
                         .id(course.getId())
                         .title(course.getTitle())
+                        .price(course.getPrice())
+                        .genre(course.getGenre())
                         .build()).collect(Collectors.toList());
     }
 
@@ -98,6 +98,59 @@ public class CoursesServiceImp implements CourseService {
                 .statusForCheckIfUserHasThisCourse(course.getStatusForCheckIfUserHasThisCourse())
                 .build();
 
+    }
+
+    @Override
+    public List<CourseResponse> getListCoursesByTitle(String genre, boolean statusForSort) {
+
+        List<Course> list;
+
+        if (statusForSort) {
+            list = courseRepository.findAllByGenreOrderByTitleDesc(genre);
+        } else {
+            list = courseRepository.findAllByGenreOrderByTitleAsc(genre);
+        }
+
+        return list.stream().map(course ->
+                CourseResponse.builder()
+                        .id(course.getId())
+                        .title(course.getTitle())
+                        .price(course.getPrice())
+                        .genre(course.getGenre())
+                        .build()).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CourseResponse> getListCoursesByPrice(String genre, boolean statusForSort) {
+
+        List<Course> list;
+
+        if (statusForSort) {
+            list = courseRepository.findAllByGenreOrderByPriceDesc(genre);
+        } else {
+            list = courseRepository.findAllByGenreOrderByPriceAsc(genre);
+        }
+
+        return list.stream().map(course ->
+                CourseResponse.builder()
+                        .id(course.getId())
+                        .title(course.getTitle())
+                        .price(course.getPrice())
+                        .genre(course.getGenre())
+                        .build()).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CourseResponse> getListCoursesByLimitPrice(String genre, int price) {
+        List<Course> allByGenreWherePrice = courseRepository.findAllByGenreWherePrice(genre, price);
+
+        return allByGenreWherePrice.stream().map(course ->
+                CourseResponse.builder()
+                        .id(course.getId())
+                        .title(course.getTitle())
+                        .price(course.getPrice())
+                        .genre(course.getGenre())
+                        .build()).collect(Collectors.toList());
     }
 
     private Course courseWithCheckedCourseStatus(Course originalCourse, int userId) {

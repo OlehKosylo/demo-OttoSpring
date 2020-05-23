@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserInfoForProfilePage(int id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", id)));
 
-        if (user.getStripeCardId() != null ) {
+        if (user.getStripeCardId() != null) {
             CardResponse card = paymentService.retrieveCard(id);
 
             return UserResponse.builder()
@@ -211,6 +211,16 @@ public class UserServiceImpl implements UserService {
         courses.add(course);
         user.setCourses(courses);
 
+        Integer priceCourse = course.getPrice();
+        int upgradeLvl = countPercentForLvl(priceCourse);
+        user.setLvl(user.getLvl() + upgradeLvl);
+        
         userRepository.save(user);
+    }
+
+    private int countPercentForLvl(int priceCourse) {
+        int percent = (priceCourse * 10) / 1000;
+
+        return percent;
     }
 }

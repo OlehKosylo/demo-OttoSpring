@@ -34,6 +34,27 @@ public class CourseController {
         return new ResponseEntity<>(courseService.getListCourses(genre), HttpStatus.OK);
     }
 
+    @GetMapping("/listByTitle")
+    public HttpEntity<List<CourseResponse>> getListCoursesByTitle(@RequestParam String genre,
+                                                                  @RequestParam boolean statusForSort) {
+
+        return new ResponseEntity<>(courseService.getListCoursesByTitle(genre, statusForSort), HttpStatus.OK);
+    }
+
+    @GetMapping("/listByPrice")
+    public HttpEntity<List<CourseResponse>> getListCoursesByPrice(@RequestParam String genre,
+                                                                  @RequestParam boolean statusForSort) {
+
+        return new ResponseEntity<>(courseService.getListCoursesByPrice(genre, statusForSort), HttpStatus.OK);
+    }
+
+    @GetMapping("/listByLimitPrice")
+    public HttpEntity<List<CourseResponse>> getListCoursesByLimitPrice(@RequestParam String genre,
+                                                                       @RequestParam int price) {
+
+        return new ResponseEntity<>(courseService.getListCoursesByLimitPrice(genre, price), HttpStatus.OK);
+    }
+
     @GetMapping("/getCourse")
     public HttpEntity<CourseResponse> getCourse(@RequestParam String title, @RequestParam int userId) {
 

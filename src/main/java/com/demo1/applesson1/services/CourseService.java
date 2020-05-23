@@ -14,4 +14,10 @@ public interface CourseService {
     List<CourseResponse> getWantedCourses(String title);
 
     CourseResponse getCourse(String title, int userId);
+
+    List<CourseResponse> getListCoursesByTitle(String genre, boolean statusForSort);
+
+    List<CourseResponse> getListCoursesByPrice(String genre, boolean statusForSort);
+
+    List<CourseResponse>  getListCoursesByLimitPrice(String genre, int price);
 }
