@@ -133,8 +133,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse editUserPhoto(UserRequest editUserInfoResponse) {
         int userId = editUserInfoResponse.getId();
-        Optional<User> optionalUser = Optional.of(userRepository.findById(userId).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", userId))));
-        User user = optionalUser.get();
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", userId)));
 
         User newUser;
 
@@ -179,8 +178,8 @@ public class UserServiceImpl implements UserService {
         }
 
         int userId = courseRequest.getUserId();
-        Optional<User> optionalUser = Optional.ofNullable((userRepository.findById(userId))).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", userId)));
-        User user = optionalUser.get();
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", userId)));
+
 
         Course course = Course.builder()
                 .title(courseRequest.getTitle())
@@ -210,8 +209,8 @@ public class UserServiceImpl implements UserService {
 
         List<Course> courses = user.getCourses();
 
-        Optional<Course> course = Optional.of(courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException(String.format("Course with id: %s not found!", courseId))));
-        courses.add(course.get());
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException(String.format("Course with id: %s not found!", courseId)));
+        courses.add(course);
         user.setCourses(courses);
 
         userRepository.save(user);

@@ -125,8 +125,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private Boolean checkStatusUserMail(String username) {
-        Optional<User> byUsername = userRepository.findByUsername(username);
-        User user = byUsername.get();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException(String.format("User with username: %s not found!", username)));
+
         String statusMailActivate = user.getStatusMailActivate();
         if (statusMailActivate.equals("Activated")) {
             return true;

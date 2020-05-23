@@ -89,8 +89,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         int courseId = paymentRequest.getCourseId();
-        Optional<Course> course = Optional.of(this.courseRepository.findById((long) courseId).orElseThrow(() -> new RuntimeException(String.format("Course with id: %s not found!", courseId))));
-        Course courseObject = course.get();
+        Course courseObject = this.courseRepository.findById((long) courseId).orElseThrow(() -> new RuntimeException(String.format("Course with id: %s not found!", courseId)));
         User user = courseObject.getUser();
 
         String stripeCustomerId = user.getStripeCustomerId();
