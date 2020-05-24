@@ -4,7 +4,6 @@ package com.demo1.applesson1.controllers;
 import com.demo1.applesson1.dto.PaymentRequest;
 import com.demo1.applesson1.dto.ActivateCardInStripeRequest;
 import com.demo1.applesson1.services.PaymentService;
-import com.stripe.exception.StripeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +22,7 @@ public class PaymentController {
 
 
     @PostMapping("/charge")
-    public HttpStatus charge(@RequestBody PaymentRequest paymentRequest) throws StripeException {
+    public HttpStatus charge(@RequestBody PaymentRequest paymentRequest) {
 
         paymentService.chargeCreditCard(paymentRequest);
         return HttpStatus.OK;
@@ -31,7 +30,7 @@ public class PaymentController {
 
 
     @PostMapping("/activateCard")
-    public HttpStatus activateCard(@RequestBody ActivateCardInStripeRequest activateCardInStripeRequest) throws StripeException {
+    public HttpStatus activateCard(@RequestBody ActivateCardInStripeRequest activateCardInStripeRequest) {
 
         paymentService.activateCard(
                 activateCardInStripeRequest.getTokenStripe(),
@@ -42,7 +41,7 @@ public class PaymentController {
     }
 
     @PostMapping("/changeCard")
-    public HttpStatus changeCard(@RequestBody ActivateCardInStripeRequest activateCardInStripeRequest) throws StripeException {
+    public HttpStatus changeCard(@RequestBody ActivateCardInStripeRequest activateCardInStripeRequest) {
 
         paymentService.changeCard(activateCardInStripeRequest.getCardId(), activateCardInStripeRequest.getStripeCustomerId(),
                 activateCardInStripeRequest.getTokenStripe(), activateCardInStripeRequest.getUserId());

@@ -1,6 +1,7 @@
 package com.demo1.applesson1.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,26 +30,20 @@ public class Course {
 
     private String linkOnVideo;
 
-    private String publicKey;
-
     private Integer statusForCheckIfUserHasThisCourse;
 
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+    private List<Commentaries> commentaries;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_courses_buy",
             joinColumns = @JoinColumn(name = "course_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> users;
 
-
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
-
-    @Override
-    public String toString() {
-        return "id=" + id + "title=" + title + "description=" + description + "price=" + price
-                + "genre=" + genre + "linkOnVideo=" + linkOnVideo + "statusForCheckIfUserHasThisCourse=" + statusForCheckIfUserHasThisCourse;
-
-    }
-
 }

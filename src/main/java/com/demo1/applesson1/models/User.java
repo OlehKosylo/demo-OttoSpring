@@ -36,7 +36,7 @@ public class User {
     private String tokenStripe;
     private String stripeCardId;
 
-
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_courses_buy",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -48,14 +48,5 @@ public class User {
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private List<Role> roles;
-
-
-    @Override
-    public String toString() {
-        return "id=" + id + "username=" + username + "password=" + password +
-                "name_surname=" + name_surname + "age=" + age + "sex=" + sex + "lvl=" + lvl
-                + "stripeCustomerId" + stripeCustomerId + "tokenStripe" + tokenStripe + "stripeCardId" + stripeCardId
-                + "photoURL=" + photoURL + "statusMailActivate="+ statusMailActivate;
-    }
 }
 

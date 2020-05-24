@@ -1,8 +1,6 @@
 package com.demo1.applesson1.controllers;
 
-import com.demo1.applesson1.dto.CourseRequest;
-import com.demo1.applesson1.dto.CourseResponse;
-import com.demo1.applesson1.dto.IdUserCourseRequest;
+import com.demo1.applesson1.dto.*;
 import com.demo1.applesson1.services.CourseService;
 import com.demo1.applesson1.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -75,9 +73,9 @@ public class CourseController {
     }
 
     @GetMapping("/myCourse")
-    public HttpEntity<CourseResponse> getMyCourse(@RequestParam int courseId) {
+    public HttpEntity<CourseResponse> getMyCourse(@RequestParam int courseId, @RequestParam int userId) {
 
-        return new ResponseEntity<>(courseService.getMyCourse(courseId), HttpStatus.OK);
+        return new ResponseEntity<>(courseService.getMyCourse(courseId, userId), HttpStatus.OK);
     }
 
     @PostMapping("/setBoughtCourse")
@@ -87,5 +85,18 @@ public class CourseController {
         return HttpStatus.OK;
     }
 
+    @PostMapping("/setComment")
+    public HttpEntity<List<CommentResponse>> setComment(@RequestBody CommentRequest commentRequest) {
+
+        return new ResponseEntity<>(courseService.setComment(commentRequest), HttpStatus.OK);
+    }
+
+    @GetMapping("/deleteComment")
+    public HttpEntity<List<CommentResponse>> deleteComment(@RequestParam int commentId,
+                                                           @RequestParam long courseId,
+                                                           @RequestParam int userId) {
+
+        return new ResponseEntity<>(courseService.deleteComment(commentId, courseId, userId), HttpStatus.OK);
+    }
 
 }

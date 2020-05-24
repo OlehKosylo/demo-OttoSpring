@@ -1,6 +1,9 @@
 package com.demo1.applesson1.dto;
 
+import com.demo1.applesson1.models.Commentaries;
 import lombok.*;
+
+import java.util.List;
 
 
 @Data
@@ -15,4 +18,5 @@ public class CourseResponse {
     private String genre;
     private String downloadURL;
     private int statusForCheckIfUserHasThisCourse;
+    private List<Commentaries> commentaries;
 }
