@@ -95,9 +95,9 @@ public class CoursesServiceImp implements CourseService {
 
     @Override
     public CourseResponse getCourse(String title, int userId) {
-        Course courseOfDB = courseRepository.findByTitle(title).orElseThrow(() -> new RuntimeException(String.format("Course with title: %s not found!", title)));
+        Course course = courseRepository.findByTitle(title).orElseThrow(() -> new RuntimeException(String.format("Course with title: %s not found!", title)));
 
-        Course course = courseWithCheckedCourseStatus(courseOfDB, userId);
+        int statusForView = statusForViewBuyOrOpen(course, userId);
 
         return CourseResponse.builder()
                 .genre(course.getGenre())
@@ -105,7 +105,7 @@ public class CoursesServiceImp implements CourseService {
                 .price(course.getPrice())
                 .description(course.getDescription())
                 .id(course.getId())
-                .statusForCheckIfUserHasThisCourse(course.getStatusForCheckIfUserHasThisCourse())
+                .statusForCheckIfUserHasThisCourse(statusForView)
                 .commentaries(course.getCommentaries())
                 .build();
 
@@ -247,23 +247,17 @@ public class CoursesServiceImp implements CourseService {
         return newCommentaries;
     }
 
-    private Course courseWithCheckedCourseStatus(Course originalCourse, int userId) {
-        Course course = originalCourse;
-
+    private int statusForViewBuyOrOpen(Course originalCourse, int userId) {
         List<User> users = originalCourse.getUsers();
 
         for (int j = 0; j < users.size(); j++) {
             User user = users.get(j);
 
             if (userId == user.getId()) {
-                course.setStatusForCheckIfUserHasThisCourse(1);
-                break;
-            } else {
-                course.setStatusForCheckIfUserHasThisCourse(0);
+                return 1;
             }
         }
-
-        return course;
+        return 0;
     }
 
 }
