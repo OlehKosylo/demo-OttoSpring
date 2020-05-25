@@ -1,6 +1,7 @@
 package com.demo1.applesson1.services.implentation;
 
 import com.demo1.applesson1.dto.Request.ActivateCardInStripeRequest;
+import com.demo1.applesson1.dto.Request.ChangeCardInStripeRequest;
 import com.demo1.applesson1.dto.Response.CardResponse;
 import com.demo1.applesson1.dto.Request.PaymentRequest;
 import com.demo1.applesson1.models.Course;
@@ -151,7 +152,10 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public void changeCard(String cardId, String stripeCustomerId, String tokenId, int userId) {
+    public void changeCard(ChangeCardInStripeRequest changeCardInStripeRequest) {
+        String cardId = changeCardInStripeRequest.getCardId();
+        String stripeCustomerId =  changeCardInStripeRequest.getStripeCustomerId();
+
         try {
             Customer customer =
                     Customer.retrieve(stripeCustomerId);

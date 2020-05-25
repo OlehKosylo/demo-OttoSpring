@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -19,7 +20,7 @@ public class UserRequest {
     @NotBlank
     private String name_surname;
 
-    @NotBlank
+    @NotNull
     private int age;
 
     @NotBlank

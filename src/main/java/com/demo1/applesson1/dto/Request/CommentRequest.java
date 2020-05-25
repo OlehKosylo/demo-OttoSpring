@@ -4,14 +4,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 
 @Getter
 @Setter
 public class CommentRequest {
+
+    @NotNull
     private long courseId;
 
-    @NotBlank
+    @NotNull
     private int userId;
 
     @NotBlank

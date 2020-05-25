@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -22,9 +23,9 @@ public class PaymentRequest {
     @NotBlank
     private String card_cvc;
 
-    @NotBlank
+    @NotNull
     private int courseId;
 
-    @NotBlank
+    @NotNull
     private int price;
 }

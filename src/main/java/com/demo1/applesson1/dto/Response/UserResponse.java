@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
@@ -13,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class UserResponse {
 
-    @NotBlank
+    @NotNull
     private Integer id;
 
     @NotBlank
@@ -26,7 +27,7 @@ public class UserResponse {
 
     private String sex;
 
-    @NotBlank
+    @NotNull
     private int lvl;
 
     @NotBlank

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
@@ -13,10 +14,10 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class CardResponse {
 
-    @NotBlank
+    @NotNull
     private Long exp_month;
 
-    @NotBlank
+    @NotNull
     private Integer exp_year;
 
     @NotBlank

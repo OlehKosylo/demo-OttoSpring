@@ -4,22 +4,28 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 
 @Getter
 @Setter
 public class CourseRequest {
 
+    @NotBlank
     private String title;
 
+    @NotBlank
     private String description;
 
+    @NotNull
     private int price;
 
+    @NotBlank
     private String genre;
 
+    @NotBlank
     private String downloadURL;
 
-    @NotBlank
+    @NotNull
     private int userId;
 }

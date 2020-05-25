@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -25,7 +26,7 @@ public class CourseController {
     private final CourseService courseService;
 
     @PostMapping("/create")
-    public HttpEntity<CourseResponse> create(@RequestBody CourseRequest courseRequest) {
+    public HttpEntity<CourseResponse> create(@Valid @RequestBody CourseRequest courseRequest) {
 
         return new ResponseEntity<>(userService.uploadCourse(courseRequest), HttpStatus.OK);
     }
@@ -83,14 +84,14 @@ public class CourseController {
     }
 
     @PostMapping("/setBoughtCourse")
-    public HttpStatus setBoughtCourse(@RequestBody IdUserCourseRequest id) {
+    public HttpStatus setBoughtCourse(@Valid @RequestBody IdUserCourseRequest id) {
 
         userService.setBoughtCourse(id.getUserId(), id.getCourseId());
         return HttpStatus.OK;
     }
 
     @PostMapping("/setComment")
-    public HttpEntity<CommentResponse> setComment(@RequestBody CommentRequest commentRequest) {
+    public HttpEntity<CommentResponse> setComment(@Valid @RequestBody CommentRequest commentRequest) {
 
         return new ResponseEntity<>(courseService.setComment(commentRequest), HttpStatus.OK);
     }

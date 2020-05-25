@@ -3,6 +3,7 @@ package com.demo1.applesson1.dto.Response;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
@@ -10,10 +11,10 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class CommentResponse {
 
-    @NotBlank
+    @NotNull
     private int id;
 
-    @NotBlank
+    @NotNull
     private int userId;
 
     @NotBlank
@@ -22,6 +23,6 @@ public class CommentResponse {
     @NotBlank
     private String text;
 
-    @NotBlank
+    @NotNull
     private int statusForDeleteView;
 }

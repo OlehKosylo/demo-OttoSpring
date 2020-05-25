@@ -4,6 +4,7 @@ import com.demo1.applesson1.models.Commentaries;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
@@ -13,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CourseResponse {
 
-    @NotBlank
+    @NotNull
     private long id;
 
     @NotBlank
@@ -22,7 +23,7 @@ public class CourseResponse {
     @NotBlank
     private String description;
 
-    @NotBlank
+    @NotNull
     private int price;
 
     private String genre;
@@ -30,7 +31,7 @@ public class CourseResponse {
     @NotBlank
     private String downloadURL;
 
-    @NotBlank
+    @NotNull
     private int statusForCheckIfUserHasThisCourse;
 
     @NotBlank
