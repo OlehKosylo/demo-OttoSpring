@@ -90,17 +90,16 @@ public class CourseController {
     }
 
     @PostMapping("/setComment")
-    public HttpEntity<List<CommentResponse>> setComment(@RequestBody CommentRequest commentRequest) {
+    public HttpEntity<CommentResponse> setComment(@RequestBody CommentRequest commentRequest) {
 
         return new ResponseEntity<>(courseService.setComment(commentRequest), HttpStatus.OK);
     }
 
     @GetMapping("/deleteComment")
-    public HttpEntity<List<CommentResponse>> deleteComment(@RequestParam int commentId,
-                                                           @RequestParam long courseId,
-                                                           @RequestParam int userId) {
+    public HttpStatus deleteComment(@RequestParam int commentId) {
 
-        return new ResponseEntity<>(courseService.deleteComment(commentId, courseId, userId), HttpStatus.OK);
+        courseService.deleteComment(commentId);
+        return HttpStatus.OK;
     }
 
 }

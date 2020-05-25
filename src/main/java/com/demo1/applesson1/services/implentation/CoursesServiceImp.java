@@ -62,7 +62,7 @@ public class CoursesServiceImp implements CourseService {
 
         List<Commentaries> commentariesOfDB = course.getCommentaries();
 
-        List<Commentaries> commentaries = commentWithCheckedCommentStatus(commentariesOfDB, userId);
+        List<Commentaries> commentaries = commentariesWithCheckedCommentStatus(commentariesOfDB, userId);
 
         course.setCommentaries(commentaries);
 
@@ -76,6 +76,7 @@ public class CoursesServiceImp implements CourseService {
                 .commentaries(course.getCommentaries())
                 .build();
     }
+
 
     @Override
     public List<CourseResponse> getWantedCourses(String title) {
@@ -163,7 +164,7 @@ public class CoursesServiceImp implements CourseService {
     }
 
     @Override
-    public List<CommentResponse> setComment(CommentRequest commentRequest) {
+    public CommentResponse setComment(CommentRequest commentRequest) {
 
         int userId = commentRequest.getUserId();
         long courseId = commentRequest.getCourseId();
@@ -187,64 +188,44 @@ public class CoursesServiceImp implements CourseService {
 
         courseRepository.save(course);
 
-        List<Commentaries> commentaries = commentariesRepository.findAllByCourseId(courseId);
+        Commentaries com = commentWithCheckedCommentStatus(comment, userId);
 
-        List<Commentaries> commentariesList = commentWithCheckedCommentStatus(commentaries, userId);
-
-        return commentariesList.stream().map(com ->
-                CommentResponse.builder()
-                        .id(com.getId())
-                        .userId(com.getUserId())
-                        .ownerName(com.getOwnerName())
-                        .text(com.getText())
-                        .statusForDeleteView(com.getStatusForDeleteView())
-                        .build()).collect(Collectors.toList());
+        return CommentResponse.builder()
+                .id(com.getId())
+                .userId(com.getUserId())
+                .ownerName(com.getOwnerName())
+                .text(com.getText())
+                .statusForDeleteView(com.getStatusForDeleteView())
+                .build();
     }
 
     @Override
-    public List<CommentResponse> deleteComment(int commentId, long courseId, int userId) {
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException(String.format("Course with title: %s not found!", courseId)));
-
-        List<Commentaries> commentaries = course.getCommentaries();
-        List<Commentaries> newCommentaries = new ArrayList<>();
-
-        for (int i = 0; i < commentaries.size(); i++) {
-            Commentaries commentaries2 = commentaries.get(i);
-            if (commentId != commentaries2.getId()) {
-                newCommentaries.add(commentaries2);
-            } else {
-                commentariesRepository.deleteById(commentaries2.getId());
-            }
-        }
-
-        course.setCommentaries(newCommentaries);
-
-        courseRepository.save(course);
-
-        List<Commentaries> commentWithCheckedCommentStatus = commentWithCheckedCommentStatus(newCommentaries, userId);
-
-        return commentWithCheckedCommentStatus.stream().map(com ->
-                CommentResponse.builder()
-                        .id(com.getId())
-                        .userId(com.getUserId())
-                        .ownerName(com.getOwnerName())
-                        .text(com.getText())
-                        .statusForDeleteView(com.getStatusForDeleteView())
-                        .build()).collect(Collectors.toList());
+    public void deleteComment(int commentId) {
+        commentariesRepository.deleteById(commentId);
     }
 
-    private List<Commentaries> commentWithCheckedCommentStatus(List<Commentaries> commentaries, int userId) {
-        List<Commentaries> newCommentaries = commentaries;
 
-        for (int i = 0; i < newCommentaries.size(); i++) {
-            if (commentaries.get(i).getUserId() == userId) {
-                newCommentaries.get(i).setStatusForDeleteView(1);
-            } else {
-                newCommentaries.get(i).setStatusForDeleteView(0);
-            }
+    private Commentaries commentWithCheckedCommentStatus(Commentaries comment, int userId) {
+        Commentaries newComment = comment;
+
+        if (comment.getUserId() == userId) {
+            newComment.setStatusForDeleteView(1);
+        } else {
+            newComment.setStatusForDeleteView(0);
         }
 
-        return newCommentaries;
+        return newComment;
+    }
+
+    private List<Commentaries> commentariesWithCheckedCommentStatus(List<Commentaries> commentariesOfDB, int userId) {
+        List<Commentaries> newList =new ArrayList<>();
+
+        for(Commentaries com: commentariesOfDB) {
+            Commentaries comment = commentWithCheckedCommentStatus(com, userId);
+            newList.add(comment);
+        }
+
+        return newList;
     }
 
     private int statusForViewBuyOrOpen(Course originalCourse, int userId) {

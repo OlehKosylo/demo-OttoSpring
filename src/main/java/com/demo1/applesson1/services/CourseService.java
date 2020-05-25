@@ -23,7 +23,7 @@ public interface CourseService {
 
     List<CourseResponse>  getListCoursesByLimitPrice(String genre, int price);
 
-    List<CommentResponse> setComment(CommentRequest CommentRequest);
+    CommentResponse setComment(CommentRequest CommentRequest);
 
-    List<CommentResponse> deleteComment(int commentId, long courseId, int userId);
+    void deleteComment(int commentId);
 }
