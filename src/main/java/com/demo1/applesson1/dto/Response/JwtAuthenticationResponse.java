@@ -3,13 +3,11 @@ package com.demo1.applesson1.dto.Response;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
 public class JwtAuthenticationResponse {
 
-    @NotBlank
     private String accessToken;
 
     private String tokenType = "Bearer";
