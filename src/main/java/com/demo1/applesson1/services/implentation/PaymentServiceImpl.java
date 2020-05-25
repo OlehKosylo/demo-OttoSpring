@@ -60,8 +60,6 @@ public class PaymentServiceImpl implements PaymentService {
 
         String[] monthAndYear = yearAndMonthForCard(paymentRequest);
 
-        System.out.println(monthAndYear[0] + "  " + monthAndYear[1]);
-
         Map<String, Object> card = new HashMap<>();
         card.put("number", paymentRequest.getCard_number());
         card.put("exp_month", monthAndYear[0]);
