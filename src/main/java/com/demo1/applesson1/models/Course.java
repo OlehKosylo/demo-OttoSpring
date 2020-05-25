@@ -33,7 +33,7 @@ public class Course {
     private Integer statusForCheckIfUserHasThisCourse;
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "course")
     private List<Commentaries> commentaries;
 
     @JsonIgnore

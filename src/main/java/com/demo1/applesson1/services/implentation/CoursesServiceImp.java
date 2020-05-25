@@ -218,9 +218,9 @@ public class CoursesServiceImp implements CourseService {
     }
 
     private List<Commentaries> commentariesWithCheckedCommentStatus(List<Commentaries> commentariesOfDB, int userId) {
-        List<Commentaries> newList =new ArrayList<>();
+        List<Commentaries> newList = new ArrayList<>();
 
-        for(Commentaries com: commentariesOfDB) {
+        for (Commentaries com : commentariesOfDB) {
             Commentaries comment = commentWithCheckedCommentStatus(com, userId);
             newList.add(comment);
         }

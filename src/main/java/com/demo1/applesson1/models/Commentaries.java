@@ -25,7 +25,7 @@ public class Commentaries {
     private int statusForDeleteView;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Course course;
 
 }
