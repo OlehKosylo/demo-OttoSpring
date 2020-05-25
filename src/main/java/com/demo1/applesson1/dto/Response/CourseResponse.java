@@ -34,6 +34,6 @@ public class CourseResponse {
     @NotNull
     private int statusForCheckIfUserHasThisCourse;
 
-    @NotBlank
+
     private List<Commentaries> commentaries;
 }

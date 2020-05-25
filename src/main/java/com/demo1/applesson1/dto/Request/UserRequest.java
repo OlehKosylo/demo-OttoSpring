@@ -29,6 +29,5 @@ public class UserRequest {
     @NotBlank
     private String mail;
 
-    @NotBlank
     private String photoURL;
 }

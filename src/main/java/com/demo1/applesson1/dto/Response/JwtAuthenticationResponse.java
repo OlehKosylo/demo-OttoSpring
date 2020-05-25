@@ -12,7 +12,6 @@ public class JwtAuthenticationResponse {
     @NotBlank
     private String accessToken;
 
-    @NotBlank
     private String tokenType = "Bearer";
 
     public JwtAuthenticationResponse(String accessToken) {

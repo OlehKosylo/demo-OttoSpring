@@ -23,8 +23,10 @@ public class UserResponse {
     @NotBlank
     private String name_surname;
 
+    @NotNull
     private int age;
 
+    @NotBlank
     private String sex;
 
     @NotNull
