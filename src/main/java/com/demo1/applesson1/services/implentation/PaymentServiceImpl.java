@@ -145,25 +145,9 @@ public class PaymentServiceImpl implements PaymentService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", userId)));
 
-        User updateUser = User.builder()
-                .id(user.getId())
-                .mail(user.getMail())
-                .lvl(user.getLvl())
-                .password(user.getPassword())
-                .username(user.getUsername())
-                .sex(user.getSex())
-                .age(user.getAge())
-                .name_surname(user.getName_surname())
-                .roles(user.getRoles())
-                .courses(user.getCourses())
-                .stripeCustomerId(user.getStripeCustomerId())
-                .tokenStripe(tokenStripe)
-                .photoURL(user.getPhotoURL())
-                .stripeCardId(cardId)
-                .statusMailActivate(user.getStatusMailActivate())
-                .build();
+        user.setStripeCardId(cardId);
 
-        userRepository.save(updateUser);
+        userRepository.save(user);
     }
 
     @Override
