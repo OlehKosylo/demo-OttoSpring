@@ -1,8 +1,8 @@
 package com.demo1.applesson1.controllers;
 
 
-import com.demo1.applesson1.dto.PaymentRequest;
-import com.demo1.applesson1.dto.ActivateCardInStripeRequest;
+import com.demo1.applesson1.dto.Request.PaymentRequest;
+import com.demo1.applesson1.dto.Request.ActivateCardInStripeRequest;
 import com.demo1.applesson1.services.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,10 +32,7 @@ public class PaymentController {
     @PostMapping("/activateCard")
     public HttpStatus activateCard(@RequestBody ActivateCardInStripeRequest activateCardInStripeRequest) {
 
-        paymentService.activateCard(
-                activateCardInStripeRequest.getTokenStripe(),
-                activateCardInStripeRequest.getUserId(),
-                activateCardInStripeRequest.getCardId());
+        paymentService.activateCard(activateCardInStripeRequest);
 
         return HttpStatus.OK;
     }

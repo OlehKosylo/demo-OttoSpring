@@ -1,8 +1,9 @@
 package com.demo1.applesson1.services;
 
 
-import com.demo1.applesson1.dto.CardResponse;
-import com.demo1.applesson1.dto.PaymentRequest;
+import com.demo1.applesson1.dto.Request.ActivateCardInStripeRequest;
+import com.demo1.applesson1.dto.Response.CardResponse;
+import com.demo1.applesson1.dto.Request.PaymentRequest;
 import com.demo1.applesson1.models.User;
 
 
@@ -13,7 +14,7 @@ public interface PaymentService {
 
     void chargeCreditCard(PaymentRequest paymentRequest);
 
-    void activateCard(String tok_visa, int userId, String cardId);
+    void activateCard(ActivateCardInStripeRequest activateCardInStripeRequest);
 
     void setStripeCard(int userId, String tok_vise, String cardId);
 

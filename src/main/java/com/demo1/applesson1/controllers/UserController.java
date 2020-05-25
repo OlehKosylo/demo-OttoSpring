@@ -1,7 +1,7 @@
 package com.demo1.applesson1.controllers;
 
-import com.demo1.applesson1.dto.UserRequest;
-import com.demo1.applesson1.dto.UserResponse;
+import com.demo1.applesson1.dto.Request.UserRequest;
+import com.demo1.applesson1.dto.Response.UserResponse;
 import com.demo1.applesson1.services.UserService;
 import com.stripe.exception.StripeException;
 import lombok.RequiredArgsConstructor;

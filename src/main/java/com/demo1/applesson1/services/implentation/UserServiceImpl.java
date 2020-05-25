@@ -1,6 +1,10 @@
 package com.demo1.applesson1.services.implentation;
 
-import com.demo1.applesson1.dto.*;
+import com.demo1.applesson1.dto.Request.CourseRequest;
+import com.demo1.applesson1.dto.Request.UserRequest;
+import com.demo1.applesson1.dto.Response.CardResponse;
+import com.demo1.applesson1.dto.Response.CourseResponse;
+import com.demo1.applesson1.dto.Response.UserResponse;
 import com.demo1.applesson1.models.Course;
 import com.demo1.applesson1.models.User;
 import com.demo1.applesson1.repository.CourseRepository;
@@ -42,36 +46,24 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserInfoForProfilePage(int id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", id)));
 
+        CardResponse card = null;
         if (user.getStripeCardId() != null) {
-            CardResponse card = paymentService.retrieveCard(id);
-
-            return UserResponse.builder()
-                    .name_surname(user.getName_surname())
-                    .age(user.getAge())
-                    .username(user.getUsername())
-                    .id(user.getId())
-                    .lvl(user.getLvl())
-                    .sex(user.getSex())
-                    .stripe_card_id(user.getStripeCardId())
-                    .stripe_customer_id(user.getStripeCustomerId())
-                    .token_stripe(user.getTokenStripe())
-                    .photoURL(user.getPhotoURL())
-                    .card(card)
-                    .build();
-        } else {
-            return UserResponse.builder()
-                    .name_surname(user.getName_surname())
-                    .age(user.getAge())
-                    .username(user.getUsername())
-                    .id(user.getId())
-                    .lvl(user.getLvl())
-                    .sex(user.getSex())
-                    .stripe_card_id(user.getStripeCardId())
-                    .stripe_customer_id(user.getStripeCustomerId())
-                    .token_stripe(user.getTokenStripe())
-                    .photoURL(user.getPhotoURL())
-                    .build();
+            card = paymentService.retrieveCard(id);
         }
+
+        return UserResponse.builder()
+                .name_surname(user.getName_surname())
+                .age(user.getAge())
+                .username(user.getUsername())
+                .id(user.getId())
+                .lvl(user.getLvl())
+                .sex(user.getSex())
+                .stripe_card_id(user.getStripeCardId())
+                .stripe_customer_id(user.getStripeCustomerId())
+                .token_stripe(user.getTokenStripe())
+                .photoURL(user.getPhotoURL())
+                .card(card)
+                .build();
     }
 
 
@@ -81,40 +73,24 @@ public class UserServiceImpl implements UserService {
         int userId = user.getId();
         User userOfDB = userRepository.findById(userId).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", userId)));
 
-        User newUser;
+        User newUser = User.builder()
+                .id(user.getId())
+                .name_surname(user.getName_surname())
+                .age(user.getAge())
+                .sex(user.getSex())
+                .username(userOfDB.getUsername())
+                .password(userOfDB.getPassword())
+                .lvl(userOfDB.getLvl())
+                .stripeCardId(userOfDB.getStripeCardId())
+                .stripeCustomerId(userOfDB.getStripeCustomerId())
+                .tokenStripe(userOfDB.getTokenStripe())
+                .photoURL(userOfDB.getPhotoURL())
+                .mail(userOfDB.getMail())
+                .statusMailActivate(userOfDB.getStatusMailActivate())
+                .build();
 
         if (user.getPassword() != null && user.getPassword().length() >= 8) {
-            newUser = User.builder()
-                    .id(user.getId())
-                    .name_surname(user.getName_surname())
-                    .age(user.getAge())
-                    .sex(user.getSex())
-                    .username(userOfDB.getUsername())
-                    .password(passwordEncoder.encode(user.getPassword()))
-                    .lvl(userOfDB.getLvl())
-                    .stripeCardId(userOfDB.getStripeCardId())
-                    .stripeCustomerId(userOfDB.getStripeCustomerId())
-                    .tokenStripe(userOfDB.getTokenStripe())
-                    .photoURL(userOfDB.getPhotoURL())
-                    .mail(userOfDB.getMail())
-                    .statusMailActivate(userOfDB.getStatusMailActivate())
-                    .build();
-        } else {
-            newUser = User.builder()
-                    .id(user.getId())
-                    .name_surname(user.getName_surname())
-                    .age(user.getAge())
-                    .sex(user.getSex())
-                    .username(userOfDB.getUsername())
-                    .password(userOfDB.getPassword())
-                    .lvl(userOfDB.getLvl())
-                    .stripeCardId(userOfDB.getStripeCardId())
-                    .stripeCustomerId(userOfDB.getStripeCustomerId())
-                    .tokenStripe(userOfDB.getTokenStripe())
-                    .photoURL(userOfDB.getPhotoURL())
-                    .mail(userOfDB.getMail())
-                    .statusMailActivate(userOfDB.getStatusMailActivate())
-                    .build();
+            newUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
         User save = userRepository.save(newUser);
@@ -130,41 +106,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse editUserPhoto(UserRequest editUserInfoResponse) {
+
         int userId = editUserInfoResponse.getId();
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", userId)));
 
-        User newUser;
+        user.setPhotoURL(editUserInfoResponse.getPhotoURL());
 
-        newUser = User.builder()
+        userRepository.save(user);
+
+        return UserResponse.builder()
                 .id(user.getId())
                 .name_surname(user.getName_surname())
                 .age(user.getAge())
                 .sex(user.getSex())
                 .username(user.getUsername())
-                .password(user.getPassword())
                 .lvl(user.getLvl())
-                .stripeCardId(user.getStripeCardId())
-                .stripeCustomerId(user.getStripeCustomerId())
-                .tokenStripe(user.getTokenStripe())
+                .stripe_card_id(user.getStripeCardId())
+                .stripe_customer_id(user.getStripeCustomerId())
+                .token_stripe(user.getTokenStripe())
                 .mail(user.getMail())
-                .photoURL(editUserInfoResponse.getPhotoURL())
-                .statusMailActivate(user.getStatusMailActivate())
-                .build();
-
-        userRepository.save(newUser);
-
-        return UserResponse.builder()
-                .id(newUser.getId())
-                .name_surname(newUser.getName_surname())
-                .age(newUser.getAge())
-                .sex(newUser.getSex())
-                .username(newUser.getUsername())
-                .lvl(newUser.getLvl())
-                .stripe_card_id(newUser.getStripeCardId())
-                .stripe_customer_id(newUser.getStripeCustomerId())
-                .token_stripe(newUser.getTokenStripe())
-                .mail(newUser.getMail())
-                .photoURL(newUser.getPhotoURL())
+                .photoURL(user.getPhotoURL())
                 .build();
     }
 
@@ -214,7 +175,7 @@ public class UserServiceImpl implements UserService {
         Integer priceCourse = course.getPrice();
         int upgradeLvl = countPercentForLvl(priceCourse);
         user.setLvl(user.getLvl() + upgradeLvl);
-        
+
         userRepository.save(user);
     }
 

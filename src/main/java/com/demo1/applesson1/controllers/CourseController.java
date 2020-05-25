@@ -1,6 +1,10 @@
 package com.demo1.applesson1.controllers;
 
-import com.demo1.applesson1.dto.*;
+import com.demo1.applesson1.dto.Request.CommentRequest;
+import com.demo1.applesson1.dto.Request.CourseRequest;
+import com.demo1.applesson1.dto.Request.IdUserCourseRequest;
+import com.demo1.applesson1.dto.Response.CommentResponse;
+import com.demo1.applesson1.dto.Response.CourseResponse;
 import com.demo1.applesson1.services.CourseService;
 import com.demo1.applesson1.services.UserService;
 import lombok.RequiredArgsConstructor;

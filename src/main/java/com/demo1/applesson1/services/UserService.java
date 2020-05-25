@@ -1,9 +1,9 @@
 package com.demo1.applesson1.services;
 
-import com.demo1.applesson1.dto.CourseRequest;
-import com.demo1.applesson1.dto.CourseResponse;
-import com.demo1.applesson1.dto.UserRequest;
-import com.demo1.applesson1.dto.UserResponse;
+import com.demo1.applesson1.dto.Request.CourseRequest;
+import com.demo1.applesson1.dto.Response.CourseResponse;
+import com.demo1.applesson1.dto.Request.UserRequest;
+import com.demo1.applesson1.dto.Response.UserResponse;
 import com.stripe.exception.StripeException;
 
 public interface UserService {

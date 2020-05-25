@@ -1,8 +1,8 @@
 package com.demo1.applesson1.controllers;
 
-import com.demo1.applesson1.dto.JwtAuthenticationResponse;
-import com.demo1.applesson1.dto.LoginRequest;
-import com.demo1.applesson1.dto.UserRequest;
+import com.demo1.applesson1.dto.Response.JwtAuthenticationResponse;
+import com.demo1.applesson1.dto.Request.LoginRequest;
+import com.demo1.applesson1.dto.Request.UserRequest;
 import com.demo1.applesson1.services.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

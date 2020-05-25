@@ -1,7 +1,8 @@
 package com.demo1.applesson1.services.implentation;
 
-import com.demo1.applesson1.dto.CardResponse;
-import com.demo1.applesson1.dto.PaymentRequest;
+import com.demo1.applesson1.dto.Request.ActivateCardInStripeRequest;
+import com.demo1.applesson1.dto.Response.CardResponse;
+import com.demo1.applesson1.dto.Request.PaymentRequest;
 import com.demo1.applesson1.models.Course;
 import com.demo1.applesson1.models.User;
 import com.demo1.applesson1.repository.CourseRepository;
@@ -110,7 +111,13 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public void activateCard(String tok_visa, int userId, String cardId) {
+    public void activateCard(ActivateCardInStripeRequest activateCardInStripeRequest) {
+
+        String tok_visa = activateCardInStripeRequest.getTokenStripe();
+        int userId = activateCardInStripeRequest.getUserId();
+        String cardId = activateCardInStripeRequest.getCardId();
+
+
         try {
             Customer customer =
                     Customer.retrieve(getStripeCustomerId(userId));
@@ -214,11 +221,11 @@ public class PaymentServiceImpl implements PaymentService {
         String card_expiry = paymentRequest.getCard_expiry();
         String[] split = card_expiry.split("/");
         String month;
-         if(split[0].trim().charAt(0) == '0'){
-             month = split[0].trim().charAt(1) + "";
-         } else {
-             month = split[0].trim();
-         }
+        if (split[0].trim().charAt(0) == '0') {
+            month = split[0].trim().charAt(1) + "";
+        } else {
+            month = split[0].trim();
+        }
 
         String year;
 

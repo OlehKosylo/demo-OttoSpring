@@ -1,6 +1,8 @@
 package com.demo1.applesson1.services.implentation;
 
-import com.demo1.applesson1.dto.*;
+import com.demo1.applesson1.dto.Request.LoginRequest;
+import com.demo1.applesson1.dto.Request.UserRequest;
+import com.demo1.applesson1.dto.Response.JwtAuthenticationResponse;
 import com.demo1.applesson1.models.User;
 import com.demo1.applesson1.repository.UserRepository;
 import com.demo1.applesson1.security.JwtTokenProvider;
@@ -59,20 +61,7 @@ public class AuthServiceImpl implements AuthService {
 
         //Sending mail part
         if (!StringUtils.isEmpty(user.getMail())) {
-            String message = String.format(
-                    "Hello, %s \n" +
-                            "Welcome to Otto. \n" +
-                            "Please, visit next link: http://localhost:4200/activate?token=%s",
-                    user.getName_surname(),
-                    user.getStatusMailActivate()
-            );
-
-            try {
-                mailSenderService.send(user.getMail(), "Activation code", message);
-                User userSave = userRepository.save(user);
-            } catch (Exception e) {
-                throw new RuntimeException(e.getMessage());
-            }
+            sendMail(user);
         }
     }
 
@@ -105,19 +94,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void activateAccount(String token) {
-        User userOfDB = userRepository.findByStatusMailActivate(token).orElseThrow(() -> new RuntimeException(String.format("User with activatedToken: %s not found!", token)));
+        User user = userRepository.findByStatusMailActivate(token).orElseThrow(() -> new RuntimeException(String.format("User with activatedToken: %s not found!", token)));
 
-        User user = User.builder()
-                .id(userOfDB.getId())
-                .username(userOfDB.getUsername())
-                .password(userOfDB.getPassword())
-                .name_surname(userOfDB.getName_surname())
-                .age(userOfDB.getAge())
-                .sex(userOfDB.getSex())
-                .mail(userOfDB.getMail())
-                .stripeCustomerId(userOfDB.getStripeCustomerId())
-                .statusMailActivate("Activated")
-                .build();
+        user.setStatusMailActivate("Activated");
 
         userRepository.save(user);
     }
@@ -130,6 +109,23 @@ public class AuthServiceImpl implements AuthService {
             return true;
         } else {
             return false;
+        }
+    }
+
+    private void sendMail(User user) {
+        String message = String.format(
+                "Hello, %s \n" +
+                        "Welcome to Otto. \n" +
+                        "Please, visit next link: http://localhost:4200/activate?token=%s",
+                user.getName_surname(),
+                user.getStatusMailActivate()
+        );
+
+        try {
+            mailSenderService.send(user.getMail(), "Activation code", message);
+            User userSave = userRepository.save(user);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

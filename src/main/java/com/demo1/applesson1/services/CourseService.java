@@ -1,9 +1,9 @@
 package com.demo1.applesson1.services;
 
 
-import com.demo1.applesson1.dto.CommentRequest;
-import com.demo1.applesson1.dto.CommentResponse;
-import com.demo1.applesson1.dto.CourseResponse;
+import com.demo1.applesson1.dto.Request.CommentRequest;
+import com.demo1.applesson1.dto.Response.CommentResponse;
+import com.demo1.applesson1.dto.Response.CourseResponse;
 import java.util.List;
 
 public interface CourseService {

@@ -1,8 +1,8 @@
 package com.demo1.applesson1.services.implentation;
 
-import com.demo1.applesson1.dto.CommentRequest;
-import com.demo1.applesson1.dto.CommentResponse;
-import com.demo1.applesson1.dto.CourseResponse;
+import com.demo1.applesson1.dto.Request.CommentRequest;
+import com.demo1.applesson1.dto.Response.CommentResponse;
+import com.demo1.applesson1.dto.Response.CourseResponse;
 import com.demo1.applesson1.models.Commentaries;
 import com.demo1.applesson1.models.Course;
 import com.demo1.applesson1.models.User;
