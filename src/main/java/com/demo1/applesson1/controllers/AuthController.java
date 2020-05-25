@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -19,14 +21,14 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public HttpStatus register(@RequestBody UserRequest userRequest) {
+    public HttpStatus register(@Valid @RequestBody UserRequest userRequest) {
 
         authService.registerUser(userRequest);
         return HttpStatus.OK;
     }
 
     @PostMapping("/login")
-    public HttpEntity<JwtAuthenticationResponse> login(@RequestBody LoginRequest loginRequest) {
+    public HttpEntity<JwtAuthenticationResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
 
         return new ResponseEntity<>(authService.loginUser(loginRequest), HttpStatus.OK);
     }
