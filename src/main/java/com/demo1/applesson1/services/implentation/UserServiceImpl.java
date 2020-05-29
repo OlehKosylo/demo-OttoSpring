@@ -62,6 +62,7 @@ public class UserServiceImpl implements UserService {
                 .stripe_customer_id(user.getStripeCustomerId())
                 .token_stripe(user.getTokenStripe())
                 .photoURL(user.getPhotoURL())
+                .mail(user.getMail())
                 .card(card)
                 .build();
     }
@@ -96,11 +97,16 @@ public class UserServiceImpl implements UserService {
         User save = userRepository.save(newUser);
 
         return UserResponse.builder()
-                .name_surname(user.getName_surname())
-                .age(user.getAge())
-                .id(user.getId())
-                .photoURL(user.getPhotoURL())
-                .sex(user.getSex())
+                .name_surname(save.getName_surname())
+                .age(save.getAge())
+                .id(save.getId())
+                .photoURL(save.getPhotoURL())
+                .sex(save.getSex())
+                .mail(save.getMail())
+                .username(save.getUsername())
+                .stripe_card_id(save.getStripeCardId())
+                .stripe_customer_id(save.getStripeCustomerId())
+                .token_stripe(save.getTokenStripe())
                 .build();
     }
 
@@ -126,6 +132,7 @@ public class UserServiceImpl implements UserService {
                 .token_stripe(user.getTokenStripe())
                 .mail(user.getMail())
                 .photoURL(user.getPhotoURL())
+
                 .build();
     }
 
