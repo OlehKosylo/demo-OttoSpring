@@ -132,7 +132,6 @@ public class UserServiceImpl implements UserService {
                 .token_stripe(user.getTokenStripe())
                 .mail(user.getMail())
                 .photoURL(user.getPhotoURL())
-
                 .build();
     }
 
