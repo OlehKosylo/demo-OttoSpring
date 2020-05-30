@@ -2,6 +2,8 @@ package com.demo1.applesson1.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -30,6 +32,7 @@ public class User {
     private int lvl;
     private String photoURL;
     private String mail;
+
     private String statusMailActivate;
     private String tokenForRecoverPassword;
 

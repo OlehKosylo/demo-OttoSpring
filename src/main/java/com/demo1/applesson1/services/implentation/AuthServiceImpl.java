@@ -46,6 +46,9 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Username [username: " + userRequest.getUsername() + "] is already taken");
         }
 
+        if (userRepository.existsByMail(userRequest.getMail())) {
+            throw new RuntimeException("Email [Email: " + userRequest.getMail() + "] is already taken");
+        }
 
         User user = User.builder()
                 .username(userRequest.getUsername())
