@@ -9,6 +9,7 @@ import com.demo1.applesson1.models.Course;
 import com.demo1.applesson1.models.User;
 import com.demo1.applesson1.repository.CourseRepository;
 import com.demo1.applesson1.repository.UserRepository;
+import com.demo1.applesson1.services.MailSenderService;
 import com.demo1.applesson1.services.PaymentService;
 import com.demo1.applesson1.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -29,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final CourseRepository courseRepository;
     private final PasswordEncoder passwordEncoder;
     private final PaymentService paymentService;
+    private final MailSenderService mailSenderService;
 
     @Override
     public UserResponse getUserInfoForMainPage(int id) {

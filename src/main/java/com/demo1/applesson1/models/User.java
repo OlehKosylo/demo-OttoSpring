@@ -31,6 +31,7 @@ public class User {
     private String photoURL;
     private String mail;
     private String statusMailActivate;
+    private String tokenForRecoverPassword;
 
     private String stripeCustomerId;
     private String tokenStripe;

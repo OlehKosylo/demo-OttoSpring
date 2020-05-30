@@ -18,4 +18,5 @@ public interface UserService {
     CourseResponse uploadCourse(CourseRequest courseRequest);
 
     void setBoughtCourse(int userId, long courseId);
+
 }

@@ -45,8 +45,4 @@ public class UserController {
         return new ResponseEntity<>(userService.editUserPhoto(editUserInfoResponse), HttpStatus.OK);
     }
 
-
-
-
-
 }

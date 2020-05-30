@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 
@@ -22,6 +23,7 @@ public class Course {
     @Column(unique = true)
     private String title;
 
+    @Column(columnDefinition = "text")
     private String description;
 
     private Integer price;

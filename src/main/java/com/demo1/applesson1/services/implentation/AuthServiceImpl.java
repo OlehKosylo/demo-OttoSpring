@@ -1,6 +1,7 @@
 package com.demo1.applesson1.services.implentation;
 
 import com.demo1.applesson1.dto.Request.LoginRequest;
+import com.demo1.applesson1.dto.Request.RecoverUserPasswordRequest;
 import com.demo1.applesson1.dto.Request.UserRequest;
 import com.demo1.applesson1.dto.Response.JwtAuthenticationResponse;
 import com.demo1.applesson1.models.User;
@@ -10,6 +11,7 @@ import com.demo1.applesson1.security.UserPrincipal;
 import com.demo1.applesson1.services.AuthService;
 import com.demo1.applesson1.services.MailSenderService;
 import com.demo1.applesson1.services.PaymentService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Slf4j
@@ -101,6 +105,44 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
     }
 
+    @Override
+    public void sendMailForRecoverPassword(String email) {
+        User user = userRepository.findByMail(email).orElseThrow(() -> new RuntimeException(String.format("User with email: %s not found!", email)));
+
+        String token = UUID.randomUUID().toString();
+        user.setTokenForRecoverPassword(token);
+
+        sendMailForRecoverPassword(user, token, email);
+
+    }
+
+    @Override
+    public void checkTokenForRecoverPassword(RecoverUserPasswordRequest recoverUserPasswordRequest) {
+        int userId = recoverUserPasswordRequest.getUserId();
+        String token = recoverUserPasswordRequest.getToken();
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException(String.format("User with email: %s not found!", userId)));
+
+        String tokenForRecoverPassword = user.getTokenForRecoverPassword();
+
+        if (!token.equals(tokenForRecoverPassword)) {
+            throw new RuntimeException(String.format("User with token: %s not found!", token));
+        }
+    }
+
+    @Override
+    public void recoverPassword(RecoverUserPasswordRequest recoverUserPasswordRequest) {
+        int userId = recoverUserPasswordRequest.getUserId();
+        String password = recoverUserPasswordRequest.getPassword();
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException(String.format("User with id: %s not found!", userId)));
+        user.setPassword(passwordEncoder.encode(password));
+        user.setTokenForRecoverPassword(null);
+
+        userRepository.save(user);
+    }
+
+
     private Boolean checkStatusUserMail(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException(String.format("User with username: %s not found!", username)));
 
@@ -111,6 +153,24 @@ public class AuthServiceImpl implements AuthService {
             return true;
         } else {
             return false;
+        }
+    }
+
+    private void sendMailForRecoverPassword(User user, String token, String email) {
+        String message = String.format(
+                "Hello, %s \n" +
+                        "Welcome to Otto. \n" +
+                        "For recover password , please visit next link: http://localhost:4200/forgot/id/token?userId=%s&token=%s",
+                user.getName_surname(),
+                user.getId(),
+                token
+        );
+
+        try {
+            mailSenderService.send(email, "Recover password", message);
+            User userSave = userRepository.save(user);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 

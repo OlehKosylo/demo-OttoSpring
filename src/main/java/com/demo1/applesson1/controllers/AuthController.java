@@ -1,5 +1,6 @@
 package com.demo1.applesson1.controllers;
 
+import com.demo1.applesson1.dto.Request.RecoverUserPasswordRequest;
 import com.demo1.applesson1.dto.Response.JwtAuthenticationResponse;
 import com.demo1.applesson1.dto.Request.LoginRequest;
 import com.demo1.applesson1.dto.Request.UserRequest;
@@ -39,4 +40,26 @@ public class AuthController {
         authService.activateAccount(token);
         return HttpStatus.OK;
     }
+
+    @PostMapping("/checkEmail")
+    public HttpStatus sendMailForRecoverPassword(@RequestBody UserRequest userRequest) {
+
+        this.authService.sendMailForRecoverPassword(userRequest.getMail());
+        return HttpStatus.OK;
+    }
+
+    @PostMapping("/checkToken")
+    public HttpStatus checkTokenForRecoverPassword(@Valid @RequestBody RecoverUserPasswordRequest recoverUserPasswordRequest) {
+
+        this.authService.checkTokenForRecoverPassword(recoverUserPasswordRequest);
+        return HttpStatus.OK;
+    }
+
+    @PostMapping("/recoverPass")
+    public HttpStatus recoverPass(@RequestBody RecoverUserPasswordRequest recoverUserPasswordRequest) {
+
+        this.authService.recoverPassword(recoverUserPasswordRequest);
+        return HttpStatus.OK;
+    }
+
 }
